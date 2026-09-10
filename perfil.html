@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Taller | AutoConecta</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .perfil-header { padding: 60px 20px; text-align: center; color: #fff; border-bottom: 5px solid #ffb703; position: relative; background-size: cover; background-position: center; }
+        .perfil-header::before { content: ""; position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.75); z-index: 1; }
+        .header-content { position: relative; z-index: 2; }
+        .perfil-avatar { width: 130px; height: 130px; border-radius: 50%; border: 4px solid #ffb703; margin: -65px auto 20px auto; background-color: #fff; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); position: relative; z-index: 10; }
+        .perfil-container { max-width: 950px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        .seccion-perfil { background: var(--bg-card); padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px var(--shadow-color); border: 1px solid var(--border-color); margin-bottom: 25px; }
+        .seccion-perfil h3 { color: var(--text-main); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .tag-servicio { background: var(--bg-main); color: var(--text-main); padding: 8px 15px; border-radius: 20px; font-size: 13px; font-weight: bold; border: 1px solid var(--border-color); display: inline-block; margin: 0 5px 10px 0; }
+        .multimedia-box { background: #000; border-radius: 12px; height: 300px; display: flex; align-items: center; justify-content: center; color: #fff; text-align: center; border: 2px dashed #444; flex-direction: column; overflow: hidden; position: relative;}
+        .candado-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(240,240,240,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; color: #333;}
+        .horario-list { list-style: none; padding: 0; font-size: 14px; color: var(--text-muted); }
+        .horario-list li { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
+        .resena-card { border-bottom: 1px solid var(--border-color); padding: 15px 0; }
+        .resena-card:last-child { border-bottom: none; padding-bottom: 0; }
+        .resena-header { display: flex; align-items: center; margin-bottom: 5px; }
+        .resena-avatar { width: 35px; height: 35px; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 12px; font-size: 16px; }
+        .resena-info { display: flex; flex-direction: column; }
+        .resena-nombre { font-weight: bold; font-size: 14px; color: var(--text-main); }
+        .resena-fecha { font-size: 11px; color: var(--text-muted); }
+        .resena-estrellas { color: #ffb703; font-size: 12px; margin: 5px 0; letter-spacing: 2px;}
+        .resena-texto { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+        .google-header { display: flex; align-items: center; justify-content: space-between; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e9ecef; margin-bottom: 20px;}
+        .google-score { font-size: 32px; font-weight: bold; color: #202124; line-height: 1; }
+        @media (max-width: 768px) { .perfil-container { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body style="background: var(--bg-main);">
+    <header>
+        <div class="logo">🔧 AutoConecta</div><nav class="main-nav"><a href="index.html">← Volver al Directorio</a></nav>
+        <div class="user-actions" id="user-actions-container"></div>
+    </header>
+
+    <div class="perfil-header" id="perfil-banner">
+        <div class="header-content">
+            <div id="perfil-badge" class="badge-elite" style="margin-bottom: 15px; font-size: 14px;">★ TALLER ÉLITE VERIFICADO</div>
+            <h1 id="perfil-titulo" style="font-size: 38px; margin-bottom: 10px;">Cargando...</h1>
+            <div class="stars" id="perfil-estrellas" style="font-size: 20px; letter-spacing: 2px;">⭐⭐⭐⭐⭐</div>
+        </div>
+    </div>
+    
+    <div class="perfil-avatar" id="perfil-avatar"></div>
+
+    <div class="perfil-container">
+        <div>
+            <div class="seccion-perfil"><h3>📝 Sobre Nosotros</h3><p id="perfil-desc" style="color: var(--text-muted); line-height: 1.7; font-size: 15px;">Cargando...</p></div>
+            <div class="seccion-perfil"><h3>⚙️ Especialidades y Servicios</h3><div id="perfil-tags"></div></div>
+            <div class="seccion-perfil">
+                <h3 style="display: flex; align-items: center; gap: 8px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="22px" height="22px">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.7 17.74 9.5 24 9.5z"/>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.2-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    </svg>
+                    Reseñas de Google Maps
+                </h3>
+                <div class="google-header" id="google-resumen"></div><div id="contenedor-resenas"></div>
+            </div>
+            <div class="seccion-perfil" id="seccion-multimedia">
+                <h3>🎬 Galería y Multimedia</h3>
+                <div class="multimedia-box" id="caja-multimedia">
+                    <span style="font-size: 40px; margin-bottom: 10px;">🎥</span><h4 style="margin: 0 0 5px 0;">Video Promocional</h4><p style="font-size: 13px; color: #888; max-width: 80%;">Reservado para animaciones del taller.</p>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="seccion-perfil">
+                <h3>Contacto Directo</h3>
+                <div id="contenedor-ws"><button id="perfil-btn-ws" class="btn-whatsapp" style="width: 100%; padding: 15px; font-size: 16px; margin-bottom: 15px;">📱 Agendar por WhatsApp</button></div>
+                <div class="status-container" style="justify-content: center; margin-bottom: 15px; font-size: 15px;"><span class="status-dot"></span> Abierto ahora mismo</div>
+                <p id="perfil-dir" style="font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 0;">📍 Cargando...</p>
+            </div>
+            <div class="seccion-perfil">
+                <h3>Horarios de Atención</h3>
+                <ul class="horario-list"><li><strong>Lunes a Viernes</strong> <span id="horario-lv"></span></li><li><strong>Sábados</strong> <span id="horario-s"></span></li><li><strong>Dom / Festivos</strong> <span id="horario-d"></span></li></ul>
+            </div>
+            <div class="seccion-perfil"><h3>Comodidades</h3><p style="font-size: 14px; color: var(--text-muted); line-height: 1.8;">💳 Acepta Tarjetas y Nequi<br>🛋️ Sala de Espera<br>📶 Wi-Fi Gratis</p></div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const idTaller = urlParams.get('id') || 'motojasvy';
+            
+            // Verifica si el taller que estamos viendo es del usuario logueado para reflejar sus cambios
+            let datos = JSON.parse(JSON.stringify(baseDatosTalleres[idTaller])); // Clona los datos
+            
+            if (sessionStorage.getItem('rolUsuario') === 'taller') {
+                let miNombre = localStorage.getItem('miTallerNombre');
+                if (datos.nombre.toLowerCase().includes(miNombre.toLowerCase().split(' ')[0])) {
+                    datos.plan = sessionStorage.getItem('miTallerPlan');
+                    datos.nombre = miNombre;
+                    if(datos.plan==='elite'){ datos.badge='★ TOP #1 (ÉLITE)'; datos.badgeClass='badge-elite'; }
+                    else if(datos.plan==='pro'){ datos.badge='★ DESTACADO (PRO)'; datos.badgeClass='badge-profesional'; }
+                    else { datos.badge=''; datos.badgeClass=''; }
+                }
+            }
+
+            if (datos) {
+                document.getElementById('perfil-titulo').innerText = datos.nombre; document.getElementById('perfil-estrellas').innerHTML = datos.estrellas;
+                document.getElementById('perfil-desc').innerText = datos.desc; document.getElementById('perfil-dir').innerText = datos.dir;
+                document.getElementById('horario-lv').innerText = datos.horarios.lv; document.getElementById('horario-s').innerText = datos.horarios.s; document.getElementById('horario-d').innerText = datos.horarios.d;
+
+                let tagsHTML = ''; datos.tagsArray.forEach(tag => { tagsHTML += `<span class="tag-servicio">✔️ ${tag}</span>`; }); document.getElementById('perfil-tags').innerHTML = tagsHTML;
+
+                let estrellasDoradas = '⭐'.repeat(Math.round(parseFloat(datos.puntaje)));
+                document.getElementById('google-resumen').innerHTML = `<div style="display:flex; align-items:center; gap:15px;"><span class="google-score">${datos.puntaje}</span><div style="display:flex; flex-direction:column;"><span style="letter-spacing: 2px; font-size:14px; margin-bottom:2px;">${estrellasDoradas}</span><span style="font-size:12px; color:#5f6368;">Basado en ${datos.totalResenas} reseñas de Google</span></div></div>`;
+
+                let resenasHTML = '';
+                let resenasGuardadas = JSON.parse(localStorage.getItem('resenasUsuarios')) || {};
+                let misResenas = resenasGuardadas[idTaller] || [];
+                let todasLasResenas = [...misResenas, ...datos.resenas];
+
+                todasLasResenas.forEach(r => {
+                    resenasHTML += `<div class="resena-card"><div class="resena-header"><div class="resena-avatar" style="background-color: ${r.color};">${r.inicial}</div><div class="resena-info"><span class="resena-nombre">${r.autor}</span><span class="resena-fecha">${r.fecha}</span></div></div><div class="resena-estrellas">${r.estrellas}</div><p class="resena-texto">${r.texto}</p></div>`;
+                });
+                document.getElementById('contenedor-resenas').innerHTML = resenasHTML;
+
+                document.getElementById('perfil-banner').style.backgroundImage = `url('${datos.img}')`; document.getElementById('perfil-avatar').style.backgroundImage = `url('${datos.img}')`;
+                
+                let badge = document.getElementById('perfil-badge'); badge.innerText = datos.badge; if(datos.badgeClass) badge.className = datos.badgeClass;
+                
+                let contenedorWs = document.getElementById('contenedor-ws'); let cajaMultimedia = document.getElementById('caja-multimedia');
+                if (datos.plan === 'gratis') {
+                    contenedorWs.innerHTML = `<div style="background: #fdf7f7; border: 1px solid #ebccd1; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 15px;"><span style="font-size: 24px;">🔒</span><p style="color: #d9534f; font-size: 13px; font-weight: bold; margin-top: 5px;">WhatsApp no disponible en Plan Estándar.</p></div>`;
+                    cajaMultimedia.innerHTML += `<div class="candado-overlay"><span style="font-size:40px; margin-bottom:10px;">🔒</span><h3 style="margin:0;">Galería Bloqueada</h3><p style="font-size:13px;">El taller no cuenta con Plan Élite.</p></div>`;
+                } else {
+                    document.getElementById('perfil-btn-ws').onclick = (e) => contactarWhatsApp(datos.ws, datos.nombre, e);
+                    if (datos.plan === 'pro') { cajaMultimedia.innerHTML += `<div class="candado-overlay"><span style="font-size:40px; margin-bottom:10px;">🔒</span><h3 style="margin:0;">Video Bloqueado</h3><p style="font-size:13px;">Requiere actualización a Plan Élite.</p></div>`; }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Seguro | AutoConecta</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Estilos exclusivos para la pasarela de pagos profesional */
+        .checkout-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px; align-items: start; }
+        @media (max-width: 800px) { .checkout-container { grid-template-columns: 1fr; } }
+        
+        /* Columna Izquierda: Formulario */
+        .pago-card { background: var(--bg-card); padding: 35px; border-radius: 12px; box-shadow: 0 8px 25px var(--shadow-color); border: 1px solid var(--border-color); }
+        .pago-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .pago-header h2 { color: var(--text-main); font-size: 22px; margin: 0; }
+        .metodos-pago { display: flex; gap: 10px; margin-bottom: 20px; }
+        .metodo-btn { flex: 1; padding: 12px; text-align: center; border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; color: var(--text-muted); font-weight: bold; background: transparent; transition: 0.2s; }
+        .metodo-btn.active { border-color: #e63946; color: #e63946; background: rgba(230, 57, 70, 0.05); }
+        
+        /* Columna Derecha: Resumen */
+        .resumen-card { background: linear-gradient(145deg, #f8f9fa, #e9ecef); padding: 30px; border-radius: 12px; border: 1px solid #dee2e6; position: sticky; top: 20px; }
+        [data-theme="dark"] .resumen-card { background: linear-gradient(145deg, #2a2a2a, #1a1a1a); border-color: #444; }
+        .resumen-item { display: flex; justify-content: space-between; margin-bottom: 15px; color: var(--text-muted); font-size: 14px; }
+        .resumen-total { display: flex; justify-content: space-between; margin-top: 20px; padding-top: 20px; border-top: 2px dashed #ccc; font-size: 20px; font-weight: bold; color: var(--text-main); }
+        .beneficios-lista { list-style: none; padding: 0; margin: 20px 0 0 0; font-size: 13px; color: var(--text-muted); }
+        .beneficios-lista li { margin-bottom: 10px; display: flex; align-items: flex-start; gap: 8px; }
+        
+        /* Trust Badges */
+        .trust-badges { display: flex; align-items: center; justify-content: center; gap: 15px; margin-top: 20px; color: #28a745; font-size: 12px; font-weight: bold; }
+        
+        /* Pantalla de Carga y Éxito */
+        .overlay-pago { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; color: #fff; text-align: center; }
+        .loader-pago { width: 60px; height: 60px; border: 6px solid rgba(255,255,255,0.2); border-top: 6px solid #28a745; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .success-checkmark { display: none; color: #28a745; font-size: 80px; margin-bottom: 10px; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; transform: scale(0); }
+        @keyframes popIn { to { transform: scale(1); } }
+    </style>
+</head>
+<body style="background: var(--bg-main);">
+
+    <header style="background: var(--bg-card); box-shadow: 0 2px 10px var(--shadow-color);">
+        <div class="logo" style="margin: 0 auto; text-align: center; width: 100%;">
+            <a href="panel-taller.html" style="color: inherit; text-decoration: none;">🔧 AutoConecta <span style="font-weight: normal; font-size: 16px; color: var(--text-muted);">| Pago Seguro</span></a>
+        </div>
+    </header>
+
+    <div class="checkout-container">
+        
+        <!-- COLUMNA IZQUIERDA: FORMULARIO -->
+        <div class="pago-card">
+            <div class="pago-header">
+                <h2>Método de Pago</h2>
+                <span style="font-size: 24px;">💳</span>
+            </div>
+
+            <div class="metodos-pago">
+                <button class="metodo-btn active" onclick="cambiarMetodo(this)">Tarjeta de Crédito / Débito</button>
+                <button class="metodo-btn" onclick="cambiarMetodo(this)">PSE / Nequi</button>
+            </div>
+
+            <div id="form-tarjeta">
+                <label style="font-size: 12px; font-weight: bold; color: var(--text-muted); display: block; margin-bottom: 5px;">Nombre en la tarjeta</label>
+                <input type="text" class="input-form" placeholder="Ej. Juan Pérez" value="Eduard Taller">
+                
+                <label style="font-size: 12px; font-weight: bold; color: var(--text-muted); display: block; margin-bottom: 5px;">Número de Tarjeta</label>
+                <div style="position: relative;">
+                    <input type="text" class="input-form" placeholder="0000 0000 0000 0000" value="4522 1234 5678 9010" style="padding-left: 35px;">
+                    <span style="position: absolute; left: 10px; top: 12px; font-size: 16px;">💳</span>
+                </div>
+                
+                <div style="display: flex; gap: 15px;">
+                    <div style="flex:1;">
+                        <label style="font-size: 12px; font-weight: bold; color: var(--text-muted); display: block; margin-bottom: 5px;">Vencimiento</label>
+                        <input type="text" class="input-form" placeholder="MM/AA" value="12/28">
+                    </div>
+                    <div style="flex:1;">
+                        <label style="font-size: 12px; font-weight: bold; color: var(--text-muted); display: block; margin-bottom: 5px;">CVC / CVV</label>
+                        <input type="password" class="input-form" placeholder="***" value="123">
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary btn-block" style="padding: 18px; font-size: 18px; font-weight: bold; margin-top: 20px; box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3);" onclick="procesarPago()">Pagar Suscripción</button>
+            
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="panel-taller.html" style="color: var(--text-muted); text-decoration: underline; font-size: 14px; cursor: pointer;">Cancelar y volver al panel</a>
+            </div>
+            
+            <div class="trust-badges">
+                <span>🔒 Cifrado SSL 256-bit</span>
+                <span>🛡️ Pago 100% Seguro</span>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: RESUMEN DE COMPRA -->
+        <div class="resumen-card">
+            <h3 style="color: var(--text-main); margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Resumen de tu compra</h3>
+            
+            <div class="resumen-item">
+                <span id="nombre-plan-resumen" style="font-weight: bold; color: var(--text-main);">Plan Seleccionado</span>
+                <span id="precio-base">$0</span>
+            </div>
+            <div class="resumen-item">
+                <span>Impuestos (IVA 19%)</span>
+                <span>Incluido</span>
+            </div>
+            <div class="resumen-item" style="color: #28a745;">
+                <span>Descuento Especial</span>
+                <span>-$0</span>
+            </div>
+
+            <div class="resumen-total">
+                <span>Total a pagar</span>
+                <span id="precio-total" style="color: #e63946;">$0 / mes</span>
+            </div>
+
+            <ul class="beneficios-lista" id="lista-beneficios">
+                <!-- Beneficios inyectados por JS -->
+            </ul>
+        </div>
+
+    </div>
+
+    <!-- PANTALLA DE CARGA Y ÉXITO SUPERPUESTA -->
+    <div class="overlay-pago" id="overlay-pago">
+        <div class="loader-pago" id="loader"></div>
+        <div class="success-checkmark" id="check-exito">✔️</div>
+        <h2 id="texto-exito" style="margin-top: 20px; display: none;">¡Pago Exitoso!</h2>
+        <p id="texto-redir" style="color: #ccc; margin-top: 10px; display: none;">Actualizando tu plan y redirigiendo a tu panel...</p>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        let urlParams = new URLSearchParams(window.location.search);
+        let planDestino = urlParams.get('plan') || 'pro';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            let nombrePlan = document.getElementById('nombre-plan-resumen');
+            let precioBase = document.getElementById('precio-base');
+            let precioTotal = document.getElementById('precio-total');
+            let listaBeneficios = document.getElementById('lista-beneficios');
+
+            if(planDestino === 'elite') {
+                nombrePlan.innerText = '★ Suscripción Élite';
+                nombrePlan.style.color = '#ffb703';
+                precioBase.innerText = '$60.000';
+                precioTotal.innerText = '$60.000 / mes';
+                listaBeneficios.innerHTML = `
+                    <li>✔️ <strong>Posicionamiento TOP #1</strong> en Fontibón.</li>
+                    <li>✔️ <strong>Inteligencia Artificial</strong> para sugerencias comerciales.</li>
+                    <li>✔️ Analíticas avanzadas de mercado.</li>
+                    <li>✔️ Galería de fotos y videos promocionales.</li>
+                    <li>✔️ Botón directo de WhatsApp habilitado.</li>
+                `;
+            } else if (planDestino === 'pro') {
+                nombrePlan.innerText = 'Suscripción Profesional';
+                precioBase.innerText = '$15.000';
+                precioTotal.innerText = '$15.000 / mes';
+                listaBeneficios.innerHTML = `
+                    <li>✔️ <strong>Tarjeta Destacada</strong> en la página de inicio.</li>
+                    <li>✔️ Mapa interactivo con ruta GPS.</li>
+                    <li>✔️ Botón directo de WhatsApp habilitado.</li>
+                    <li>✔️ Estadísticas básicas de perfil.</li>
+                `;
+            } else {
+                nombrePlan.innerText = 'Plan Estándar (Gratis)';
+                precioBase.innerText = '$0';
+                precioTotal.innerText = '$0 / mes';
+                listaBeneficios.innerHTML = `
+                    <li>✔️ Presencia básica en el directorio completo.</li>
+                    <li>❌ Sin botón de WhatsApp.</li>
+                    <li>❌ Sin estadísticas ni galería.</li>
+                `;
+            }
+        });
+
+        function cambiarMetodo(btn) {
+            reproducirSonidoUI();
+            let botones = document.querySelectorAll('.metodo-btn');
+            botones.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Simulación visual simple (cambia el placeholder para dar efecto)
+            let esNequi = btn.innerText.includes('Nequi');
+            document.querySelectorAll('.input-form').forEach(input => {
+                input.style.opacity = '0.5';
+                setTimeout(() => { input.style.opacity = '1'; }, 200);
+            });
+        }
+
+        function procesarPago() {
+            reproducirSonidoUI();
+            
+            // Mostrar la pantalla de carga superpuesta
+            let overlay = document.getElementById('overlay-pago');
+            let loader = document.getElementById('loader');
+            let check = document.getElementById('check-exito');
+            let textoExito = document.getElementById('texto-exito');
+            let textoRedir = document.getElementById('texto-redir');
+            
+            overlay.style.display = 'flex';
+            
+            // Simular tiempo de validación con el banco
+            setTimeout(() => {
+                reproducirSonidoExito();
+                loader.style.display = 'none';
+                check.style.display = 'block';
+                textoExito.style.display = 'block';
+                textoRedir.style.display = 'block';
+                
+                // Actualizar la base de datos local
+                sessionStorage.setItem('miTallerPlan', planDestino);
+                
+                // Redirigir al panel
+                setTimeout(() => { window.location.href = 'panel-taller.html'; }, 2500);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

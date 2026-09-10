@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil | AutoConecta</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .dashboard-wrapper { max-width: 1000px; margin: 40px auto; padding: 20px; }
+        .perfil-card { background: var(--bg-card); padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px var(--shadow-color); border: 1px solid var(--border-color); display: flex; gap: 20px; align-items: center; margin-bottom: 30px; }
+        .perfil-avatar { font-size: 60px; background: #f8f9fa; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 3px solid #e63946; }
+        .perfil-info h2 { color: var(--text-main); margin-bottom: 5px; }
+        .perfil-info p { color: var(--text-muted); font-size: 15px; margin: 3px 0; }
+        .favoritos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .btn-quitar { background: none; border: none; color: #e63946; font-size: 20px; cursor: pointer; transition: 0.2s; }
+        .btn-quitar:hover { transform: scale(1.2); }
+        .estrellas-rating span { font-size: 30px; cursor: pointer; color: #ccc; }
+        .estrellas-rating span.activa { color: #ffb703; }
+    </style>
+</head>
+<body style="background: var(--bg-main);">
+    <header>
+        <div class="logo"><a href="index.html" style="color: inherit; text-decoration: none;">🔧 AutoConecta</a></div>
+        <nav class="main-nav"><a href="talleres.html">Directorio Completo</a></nav>
+        <div class="user-actions" id="user-actions-container"></div>
+    </header>
+
+    <div class="dashboard-wrapper">
+        <div class="perfil-card">
+            <div class="perfil-avatar" aria-hidden="true">👤</div>
+            <div class="perfil-info">
+                <h2>Hola, Cliente AutoConecta</h2>
+                <p><strong>📧 Correo:</strong> juan@cliente.com</p>
+                <p><strong>🚗 Vehículo Registrado:</strong> <span id="display-vehiculo" style="color: #e63946; font-weight: bold;">Cargando...</span></p>
+                <p><strong>🔡 Placa:</strong> <span id="display-placa" style="background: #ffb703; color: #000; padding: 2px 8px; border-radius: 4px; font-weight: bold;">---</span></p>
+            </div>
+        </div>
+
+        <h3 style="color: var(--text-main); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">❤️ Mis Talleres Guardados</h3>
+        <div id="contenedor-favoritos" class="favoritos-grid"></div>
+    </div>
+
+    <!-- MODAL PARA ESCRIBIR RESEÑA -->
+    <div id="modal-resena" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-btn" onclick="cerrarModalResena()" style="float: right; cursor: pointer; font-size: 24px;">&times;</span>
+            <h2 style="color: var(--text-main); margin-bottom: 10px;">Calificar Taller</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 15px;">Tu opinión ayuda a la comunidad.</p>
+            <div class="estrellas-rating" id="caja-estrellas" style="text-align: center; margin-bottom: 15px;">
+                <span onclick="marcarEstrellas(1)">★</span><span onclick="marcarEstrellas(2)">★</span><span onclick="marcarEstrellas(3)">★</span><span onclick="marcarEstrellas(4)">★</span><span onclick="marcarEstrellas(5)">★</span>
+            </div>
+            <input type="hidden" id="estrellas-valor" value="5">
+            <input type="hidden" id="taller-id-resena" value="">
+            <textarea id="texto-resena" class="input-form" rows="4" placeholder="Escribe tu experiencia aquí..."></textarea>
+            <button class="btn-primary btn-block" style="padding: 15px;" onclick="guardarResena()">Publicar Reseña</button>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('display-vehiculo').innerText = (localStorage.getItem('miVehiculo') || 'No especificado').toUpperCase();
+            document.getElementById('display-placa').innerText = (localStorage.getItem('miPlaca') || 'Sin placa').toUpperCase();
+            cargarTarjetasFavoritas(); marcarEstrellas(5);
+        });
+
+        function cargarTarjetasFavoritas() {
+            let favoritos = JSON.parse(localStorage.getItem('misFavoritos')) || [];
+            let contenedor = document.getElementById('contenedor-favoritos');
+            if (favoritos.length === 0) {
+                contenedor.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: var(--bg-card); border-radius: 12px; border: 1px dashed var(--border-color);"><span style="font-size: 40px;">💔</span><h4 style="color: var(--text-main); margin-top: 15px;">Aún no tienes talleres guardados</h4><a href="talleres.html" class="btn-primary" style="display: inline-block; margin-top: 15px;">Explorar Directorio</a></div>`;
+                return;
+            }
+            let html = '';
+            favoritos.forEach(id => {
+                if(baseDatosTalleres[id]) {
+                    let t = baseDatosTalleres[id];
+                    let btnCalificar = `<button class="btn-outline" style="font-size: 13px; width: 100%; margin-top:10px; border-color:#ffb703; color:#b78200;" onclick="abrirModalResena('${id}')">⭐ Dejar Reseña</button>`;
+                    html += `<div class="card" style="margin-bottom: 0;"><div class="card-img" style="height: 140px; background-image: url('${t.img}'); background-size: cover; background-position: center;"></div><div class="card-body"><div style="display: flex; justify-content: space-between; align-items: flex-start;"><h2 class="card-title" style="font-size: 16px;">${t.nombre}</h2><button class="btn-quitar" onclick="quitarDeFavoritos('${id}')">❤️</button></div><div class="card-location" style="margin-bottom: 10px;">${t.dir}</div><a href="perfil.html?id=${id}" class="btn-primary" style="font-size: 13px; width:100%; display:block; text-align:center;">Ver Perfil</a>${btnCalificar}</div></div>`;
+                }
+            });
+            contenedor.innerHTML = html;
+        }
+
+        function quitarDeFavoritos(id) { reproducirSonidoUI(); let favs = JSON.parse(localStorage.getItem('misFavoritos')) || []; favs = favs.filter(f => f !== id); localStorage.setItem('misFavoritos', JSON.stringify(favs)); cargarTarjetasFavoritas(); }
+        function abrirModalResena(idTaller) { reproducirSonidoUI(); document.getElementById('taller-id-resena').value = idTaller; document.getElementById('modal-resena').style.display = 'flex'; }
+        function cerrarModalResena() { document.getElementById('modal-resena').style.display = 'none'; }
+        function marcarEstrellas(num) { reproducirSonidoUI(); document.getElementById('estrellas-valor').value = num; let estrellas = document.getElementById('caja-estrellas').querySelectorAll('span'); estrellas.forEach((e, index) => { if(index < num) e.classList.add('activa'); else e.classList.remove('activa'); }); }
+        
+        function guardarResena() {
+            let id = document.getElementById('taller-id-resena').value; let txt = document.getElementById('texto-resena').value; let estrellas = parseInt(document.getElementById('estrellas-valor').value);
+            let resenasGuardadas = JSON.parse(localStorage.getItem('resenasUsuarios')) || {}; if(!resenasGuardadas[id]) resenasGuardadas[id] = [];
+            resenasGuardadas[id].unshift({ autor: 'Juan (Cliente Registrado)', inicial: 'J', color: '#e63946', fecha: 'Justo ahora', estrellas: '⭐'.repeat(estrellas), texto: txt });
+            localStorage.setItem('resenasUsuarios', JSON.stringify(resenasGuardadas));
+            reproducirSonidoExito(); cerrarModalResena(); alert("¡Gracias! Tu reseña ha sido publicada en el perfil del taller.");
+        }
+    </script>
+</body>
+</html>
