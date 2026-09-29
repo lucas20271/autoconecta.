@@ -9,6 +9,15 @@
     <meta property="og:description" content="Encuentra los mejores talleres, repuestos y servicios automotrices.">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js"></script>
+    <style>
+        .info-bar { background: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 12px 20px; font-size: 13px; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .validacion-banner { background: #e8f5e9; border: 1px solid #c8e6c9; color: #2e7d32; padding: 10px 20px; border-radius: 8px; font-size: 13px; display: flex; align-items: center; gap: 10px; max-width: 900px; margin: 15px auto; }
+        [data-theme="dark"] .validacion-banner { background: rgba(46, 125, 50, 0.1); border-color: rgba(46, 125, 50, 0.3); color: #81c784; }
+        .premium-elite { border: 2px solid #ffb703 !important; box-shadow: 0 8px 20px rgba(255, 183, 3, 0.15) !important; transform: scale(1.02); z-index: 2; position: relative; }
+        .badge-elite { background: linear-gradient(90deg, #ffb703, #ff8c00); color: #fff; padding: 5px 10px; font-weight: 900; letter-spacing: 1px; border-radius: 4px; display: inline-block; font-size: 11px; margin-bottom: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .premium-profesional { border-left: 4px solid #4361ee !important; }
+        .badge-profesional { background: #4361ee; color: #fff; padding: 5px 10px; font-weight: bold; border-radius: 4px; display: inline-block; font-size: 11px; margin-bottom: 5px; }
+    </style>
 </head>
 <body>
     <div id="splash-screen" class="splash-screen">
@@ -23,6 +32,8 @@
                 </div>
                 <button class="btn-outline" style="border: none; width: 100%;" onclick="continuarComoInvitado()">Explorar como invitado →</button>
             </div>
+            
+            <!-- (Contenidos del Login y Registro siguen igual) -->
             <div id="splash-login-panel" style="display: none; background: var(--bg-card); padding: 30px; border-radius: 15px; text-align: left; max-width: 450px; margin: 0 auto; border: 1px solid var(--border-color);">
                 <h2 style="text-align: center; margin-bottom: 15px; color: var(--text-main);" id="splash-titulo-login">Ingreso</h2>
                 <div style="display: flex; gap: 10px; margin-bottom: 15px;"><button id="btn-splash-cliente" class="btn-primary" style="flex: 1;" onclick="setModoLoginSplash('cliente')">Soy Cliente</button><button id="btn-splash-taller" class="btn-outline" style="flex: 1;" onclick="setModoLoginSplash('taller')">Soy Taller</button></div>
@@ -33,6 +44,19 @@
                 <hr style="margin: 20px 0; border-top: 1px solid var(--border-color);">
                 <div style="text-align: center;"><button class="btn-outline" style="width: 100%; margin-bottom: 10px;" onclick="mostrarRegistroSplash()">Crear Cuenta Nueva</button><button style="background: none; border: none; color: var(--text-muted); text-decoration: underline;" onclick="volverAEleccionSplash()">← Volver atrás</button></div>
             </div>
+            
+            <div id="splash-registro-taller" style="display: none; background: var(--bg-card); padding: 30px; border-radius: 15px; text-align: left; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border-color);">
+                <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-main);">Registro Taller</h2>
+                <div style="display:flex; gap:10px;"><input type="text" class="input-form" placeholder="Razón Social" style="width: 60%;"><input type="text" class="input-form" placeholder="NIT" style="width: 40%;"></div>
+                <input type="text" class="input-form" placeholder="Dirección">
+                <h3 style="font-size: 14px; margin: 20px 0 10px 0; color: var(--text-main);">Elección de Suscripción</h3>
+                <label class="radio-box" style="padding: 12px; margin-bottom: 10px; display: block;"><input type="radio" name="plan" checked><div style="margin-top: 5px;"><strong>Plan Estándar (Gratis)</strong><br><span style="font-size: 11px; color: #888;">Perfil básico; Información de contacto, ubicación, servicios y visualización en el directorio general.</span></div></label>
+                <label class="radio-box" style="padding: 12px; margin-bottom: 10px; display: block; border-left: 3px solid #4361ee;"><input type="radio" name="plan"><div style="margin-top: 5px;"><strong style="color: #4361ee;">Plan Profesional ($15.000)</strong><br><span style="font-size: 11px; color: #888;">Perfil ampliado; presentación de servicios, características del establecimiento y mayor exposición.</span></div></label>
+                <label class="radio-box" style="border: 2px solid #ffb703; padding: 12px; display: block; background: #fffdf7;"><input type="radio" name="plan"><div style="margin-top: 5px;"><strong style="color: #ffb703;">★ Plan Élite ($60.000)</strong><br><span style="font-size: 11px; color: #888;">Mayor nivel de destacamiento; aparición prioritaria, mayor exposición visual e información comercial relevante.</span></div></label>
+                <button class="btn-primary btn-block" style="margin-top:20px; padding: 15px;" onclick="procesarRegistro('taller')">Crear Taller y Entrar</button>
+                <div style="text-align: center; margin-top: 15px;"><button style="background: none; border: none; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-size: 14px;" onclick="volverLoginSplash()">← Volver al Login</button></div>
+            </div>
+            
             <div id="splash-registro-cliente" style="display: none; background: var(--bg-card); padding: 30px; border-radius: 15px; text-align: left; max-width: 500px; margin: 0 auto; border: 1px solid var(--border-color);">
                 <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-main);">Registro de Cliente</h2>
                 <input type="text" class="input-form" placeholder="Nombre completo" required>
@@ -40,17 +64,6 @@
                 <div style="display:flex; gap:10px;"><input type="text" id="reg-marca" class="input-form" placeholder="Marca (Ej. Chevrolet)" style="width: 70%;"><input type="text" id="reg-placa" class="input-form" placeholder="Placa" style="width: 30%;"></div>
                 <input type="password" class="input-form" placeholder="Crear contraseña" required>
                 <button class="btn-primary btn-block" onclick="procesarRegistro('cliente')">Registrarme y Entrar</button>
-                <div style="text-align: center; margin-top: 15px;"><button style="background: none; border: none; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-size: 14px;" onclick="volverLoginSplash()">← Volver al Login</button></div>
-            </div>
-            <div id="splash-registro-taller" style="display: none; background: var(--bg-card); padding: 30px; border-radius: 15px; text-align: left; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border-color);">
-                <h2 style="text-align: center; margin-bottom: 20px; color: var(--text-main);">Registro Taller</h2>
-                <div style="display:flex; gap:10px;"><input type="text" class="input-form" placeholder="Razón Social" style="width: 60%;"><input type="text" class="input-form" placeholder="NIT" style="width: 40%;"></div>
-                <input type="text" class="input-form" placeholder="Dirección">
-                <h3 style="font-size: 14px; margin: 20px 0 10px 0; color: var(--text-main);">Elección de Suscripción</h3>
-                <label class="radio-box" style="padding: 12px; margin-bottom: 10px;"><input type="radio" name="plan" checked><div><strong>Plan Estándar (Gratis)</strong></div></label>
-                <label class="radio-box premium-box" style="padding: 12px; margin-bottom: 10px;"><input type="radio" name="plan"><div><strong>Plan Profesional ($15.000)</strong></div></label>
-                <label class="radio-box" style="border-color: #ffb703; padding: 12px;"><input type="radio" name="plan"><div><strong>★ Plan Élite ($60.000)</strong></div></label>
-                <button class="btn-primary btn-block" style="margin-top:20px; padding: 15px;" onclick="procesarRegistro('taller')">Crear Taller y Entrar</button>
                 <div style="text-align: center; margin-top: 15px;"><button style="background: none; border: none; color: var(--text-muted); text-decoration: underline; cursor: pointer; font-size: 14px;" onclick="volverLoginSplash()">← Volver al Login</button></div>
             </div>
         </div>
@@ -63,70 +76,47 @@
         <div class="user-actions" id="user-actions-container" style="position: relative; z-index: 9999;"></div>
     </header>
 
+    <div class="info-bar">
+        <div class="info-item"><strong>🏢 Talleres en sistema:</strong> 5 (Fase Beta)</div>
+        <div class="info-item"><strong>🔧 Categorías activas:</strong> 4</div>
+        <div class="info-item"><strong>📍 Cobertura:</strong> Sector Calle 17, Fontibón</div>
+    </div>
+    
+    <div class="validacion-banner">
+        <span style="font-size: 20px;">✅</span>
+        <div><strong>Plataforma Validada por Usuarios:</strong> Hemos mejorado la navegación, la visibilidad de planes y la integración de rutas nativas en Google Maps gracias a las pruebas de usabilidad.</div>
+    </div>
+
     <button class="btn-flotante-filtros" onclick="toggleFiltrosMovil()">🔍 Filtros</button>
 
     <div class="layout-wrapper">
         <aside class="sidebar">
-            <div style="display: flex; justify-content: space-between;"><h3 style="color: var(--text-main);">Filtros Destacados</h3><button onclick="toggleFiltrosMovil()" style="background:none;border:none;font-size:20px;" class="btn-flotante-filtros">❌</button></div>
-            
-            <div class="filter-group">
-                <strong>Disponibilidad Horaria</strong>
-                <label><input type="checkbox" value="abierto" onchange="aplicarFiltros()"> 🟢 Abierto Ahora</label>
-                <label><input type="checkbox" value="domingos" onchange="aplicarFiltros()"> 📅 Abre Domingos</label>
-                <label><input type="checkbox" value="festivos" onchange="aplicarFiltros()"> 🏖️ Abre Festivos</label>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="color: var(--text-main); margin: 0;">Filtros Destacados</h3>
+                <button onclick="toggleFiltrosMovil()" style="background:none; border:none; font-size:28px; color: var(--text-muted); cursor:pointer; line-height: 1;" class="btn-cerrar-filtros" aria-label="Cerrar">&times;</button>
             </div>
-
-            <div class="filter-group">
-                <strong>Tipo de Vehículo</strong>
-                <label><input type="checkbox" value="motos" onchange="aplicarFiltros()"> Motocicletas</label>
-                <label><input type="checkbox" value="livianos" onchange="aplicarFiltros()"> Vehículos Livianos</label>
-                <label><input type="checkbox" value="pesados" onchange="aplicarFiltros()"> Carga Pesada</label>
-                <label><input type="checkbox" value="electricos" onchange="aplicarFiltros()"> Eléctricos / Híbridos</label>
-            </div>
-            
-            <div class="filter-group">
-                <strong>Especialidad Principal</strong>
-                <label><input type="checkbox" value="mecanica" onchange="aplicarFiltros()"> Mecánica General</label>
-                <label><input type="checkbox" value="repuestos" onchange="aplicarFiltros()"> Venta de Repuestos</label>
-                <label><input type="checkbox" value="latoneria" onchange="aplicarFiltros()"> Latonería y Pintura</label>
-                <label><input type="checkbox" value="electricidad" onchange="aplicarFiltros()"> Electricidad Automotriz</label>
-            </div>
-
-            <div class="filter-group">
-                <strong>Servicios Específicos</strong>
-                <label><input type="checkbox" value="aceite" onchange="aplicarFiltros()"> Cambio de Aceite</label>
-                <label><input type="checkbox" value="frenos" onchange="aplicarFiltros()"> Frenos y Suspensión</label>
-                <label><input type="checkbox" value="llantas" onchange="aplicarFiltros()"> Llantas y Alineación</label>
-                <label><input type="checkbox" value="escaner" onchange="aplicarFiltros()"> Escáner Computarizado</label>
-                <label><input type="checkbox" value="baterias" onchange="aplicarFiltros()"> Venta de Baterías</label>
-            </div>
-
-            <div class="filter-group">
-                <strong>Comodidades y Pagos</strong>
-                <label><input type="checkbox" value="tarjetas" onchange="aplicarFiltros()"> Acepta Tarjetas / Nequi</label>
-                <label><input type="checkbox" value="espera" onchange="aplicarFiltros()"> Sala de Espera</label>
-                <label><input type="checkbox" value="wifi" onchange="aplicarFiltros()"> Wi-Fi Gratis</label>
-            </div>
-
+            <div class="filter-group"><strong>Disponibilidad Horaria</strong><label><input type="checkbox" value="abierto" onchange="aplicarFiltros()"> 🟢 Abierto Ahora</label><label><input type="checkbox" value="domingos" onchange="aplicarFiltros()"> 📅 Abre Domingos</label></div>
+            <div class="filter-group"><strong>Tipo de Vehículo</strong><label><input type="checkbox" value="motos" onchange="aplicarFiltros()"> Motocicletas</label><label><input type="checkbox" value="livianos" onchange="aplicarFiltros()"> Vehículos Livianos</label></div>
+            <div class="filter-group"><strong>Especialidad Principal</strong><label><input type="checkbox" value="mecanica" onchange="aplicarFiltros()"> Mecánica General</label><label><input type="checkbox" value="repuestos" onchange="aplicarFiltros()"> Venta de Repuestos</label></div>
+            <div class="filter-group"><strong>Servicios Específicos</strong><label><input type="checkbox" value="aceite" onchange="aplicarFiltros()"> Cambio de Aceite</label><label><input type="checkbox" value="escaner" onchange="aplicarFiltros()"> Escáner Computarizado</label></div>
             <button class="btn-filter" style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);" onclick="mostrarTodos()">Limpiar Filtros</button>
-            <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; font-size: 12px; color: #856404; text-align: center; border: 1px solid #ffeeba;"><strong>💡 Mostrando solo Talleres Premium</strong><br>Para ver el directorio completo, haz clic en "Todos los Talleres" arriba.</div>
+            <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; font-size: 12px; color: #856404; text-align: center; border: 1px solid #ffeeba;"><strong>💡 Mostrando solo Premium</strong><br>Ve el directorio completo arriba.</div>
         </aside>
 
         <main class="list-content" id="contenedor-talleres"></main>
 
         <section class="map-container">
-            <div class="map-wrapper" style="position: relative; width: 100%; height: 100%;">
-                <iframe id="mapa-google" src="https://maps.google.com/maps?q=4.677010,-74.149393&hl=es&z=17&output=embed" width="100%" height="100%" style="border:0; position: absolute; top:0; left:0;"></iframe>
-                
-                <!-- BOTÓN RESTAURADO: Abre Google Maps en una nueva pestaña (target="_blank") -->
-                <a id="btn-como-llegar" href="#" target="_blank" style="display:none; position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); background: #28a745; color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: bold; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 5; flex-direction: row; align-items: center; gap: 8px; transition: transform 0.2s;">
-                    <span style="font-size: 18px;">📍</span> Cómo llegar
-                </a>
-                
+            <div class="map-wrapper">
+                <div id="map-placeholder" style="position: absolute; top:0; left:0; width:100%; height:100%; background:var(--bg-main); z-index:4; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px; border: 2px dashed var(--border-color);">
+                    <span style="font-size:50px; margin-bottom: 10px;">🗺️</span>
+                    <h3 style="color:var(--text-main); margin: 0;">Ubicación en el Mapa</h3>
+                    <p style="color:var(--text-muted); font-size:14px;">Selecciona un taller en la lista para ubicarlo.</p>
+                </div>
+                <iframe id="mapa-google" src="" width="100%" height="100%" style="border:0; position: absolute; top:0; left:0;"></iframe>
+                <a id="btn-como-llegar" href="#" target="_blank" style="display:none; position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); background: #28a745; color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: bold; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 5; align-items: center; gap: 8px;"><span style="font-size: 18px;">📍</span> Cómo llegar</a>
                 <div id="aviso-mapa-restringido" style="display: none; position: absolute; top:0; left:0; width: 100%; height: 100%; background: #fff3cd; color: #856404; padding: 20px; text-align: center; box-sizing: border-box; align-items: center; justify-content: center; flex-direction: column; z-index: 10;">
-                    <span style="font-size: 36px; margin-bottom: 10px;">🔒</span>
-                    <h3 style="margin: 0 0 5px 0;">Mapa Restringido</h3>
-                    <p style="font-size: 13px; margin: 0;">Este establecimiento opera bajo el <strong>Plan Estándar (Gratis)</strong>.</p>
+                    <span style="font-size: 36px; margin-bottom: 10px;">🔒</span><h3 style="margin: 0 0 5px 0;">Mapa Restringido</h3>
+                    <p style="font-size: 13px; margin: 0;">Establecimiento bajo <strong>Plan Estándar</strong>.</p>
                 </div>
             </div>
         </section>

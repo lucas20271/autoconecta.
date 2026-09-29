@@ -6,93 +6,275 @@
     <title>Mi Perfil | AutoConecta</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .dashboard-wrapper { max-width: 1000px; margin: 40px auto; padding: 20px; }
-        .perfil-card { background: var(--bg-card); padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px var(--shadow-color); border: 1px solid var(--border-color); display: flex; gap: 20px; align-items: center; margin-bottom: 30px; }
-        .perfil-avatar { font-size: 60px; background: #f8f9fa; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 3px solid #e63946; }
-        .perfil-info h2 { color: var(--text-main); margin-bottom: 5px; }
-        .perfil-info p { color: var(--text-muted); font-size: 15px; margin: 3px 0; }
-        .favoritos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .btn-quitar { background: none; border: none; color: #e63946; font-size: 20px; cursor: pointer; transition: 0.2s; }
-        .btn-quitar:hover { transform: scale(1.2); }
-        .estrellas-rating span { font-size: 30px; cursor: pointer; color: #ccc; }
-        .estrellas-rating span.activa { color: #ffb703; }
+        .panel-container { display: grid; grid-template-columns: 250px 1fr; gap: 20px; max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        @media (max-width: 768px) { .panel-container { grid-template-columns: 1fr; } }
+        .panel-menu { background: var(--bg-card); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); height: fit-content; }
+        .panel-menu a { display: block; padding: 12px 15px; color: var(--text-main); text-decoration: none; border-radius: 8px; margin-bottom: 5px; transition: 0.2s; font-weight: bold; cursor: pointer; }
+        .panel-menu a:hover, .panel-menu a.active { background: #e63946; color: #fff; }
+        .panel-content { background: var(--bg-card); border-radius: 12px; padding: 30px; border: 1px solid var(--border-color); min-height: 500px; }
+        .tab-seccion { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-seccion.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .seccion-form { border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .seccion-form h3 { margin-top: 0; color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; }
+        .cita-box { border-left: 4px solid #28a745; background: var(--bg-main); padding: 15px; margin-bottom: 15px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;}
+        .cita-box.pasada { border-left-color: #6c757d; opacity: 0.7; }
+        .badge-estado { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .estado-confirmada { background: #d4edda; color: #155724; }
+        .estado-completada { background: #e2e3e5; color: #383d41; }
+        .favoritos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+        .empty-state { text-align: center; padding: 40px 20px; background: var(--bg-main); border-radius: 8px; border: 2px dashed var(--border-color); color: var(--text-muted); }
+
+        /* SISTEMA DE CHAT INTERNO */
+        .chat-container-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+        .chat-list { flex: 1; min-width: 250px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-main); height: 450px; overflow-y: auto; padding: 10px; }
+        .chat-item { padding: 12px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; margin-bottom: 5px; transition: 0.2s; background: var(--bg-card); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .chat-item:hover, .chat-item.active { border-color: #e63946; background: rgba(230, 57, 70, 0.05); }
+        .chat-item h4 { margin: 0 0 5px 0; color: var(--text-main); font-size: 14px; }
+        .chat-item p { margin: 0; font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-box { flex: 2; min-width: 300px; border: 1px solid var(--border-color); border-radius: 8px; display: none; flex-direction: column; height: 450px; background: var(--bg-main); overflow: hidden; }
+        .chat-header { background: var(--bg-card); padding: 15px; border-bottom: 1px solid var(--border-color); font-weight: bold; font-size: 16px; color: var(--text-main); }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .mensaje { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 13px; position: relative; }
+        .msg-cliente { background: #e63946; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .msg-taller { background: #e9ecef; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; }
+        [data-theme="dark"] .msg-taller { background: #333; color: #fff; }
+        .chat-input-area { display: flex; padding: 10px; border-top: 1px solid var(--border-color); background: var(--bg-card); }
+        .chat-input { flex: 1; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 20px; outline: none; background: var(--bg-main); color: var(--text-main); }
+        .chat-send { background: #e63946; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; margin-left: 10px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .chat-send:hover { transform: scale(1.1); }
     </style>
 </head>
-<body style="background: var(--bg-main);">
+<body>
+
     <header>
         <div class="logo"><a href="index.html" style="color: inherit; text-decoration: none;">🔧 AutoConecta</a></div>
-        <nav class="main-nav"><a href="talleres.html">Directorio Completo</a></nav>
-        <div class="user-actions" id="user-actions-container"></div>
+        <div class="user-actions">
+            <a href="index.html" class="btn-outline">Ver Directorio</a>
+            <a href="#" class="btn-exit-elegant" onclick="cerrarSesion()">🚪 Salir</a>
+        </div>
     </header>
 
-    <div class="dashboard-wrapper">
-        <div class="perfil-card">
-            <div class="perfil-avatar" aria-hidden="true">👤</div>
-            <div class="perfil-info">
-                <h2>Hola, Cliente AutoConecta</h2>
-                <p><strong>📧 Correo:</strong> juan@cliente.com</p>
-                <p><strong>🚗 Vehículo Registrado:</strong> <span id="display-vehiculo" style="color: #e63946; font-weight: bold;">Cargando...</span></p>
-                <p><strong>🔡 Placa:</strong> <span id="display-placa" style="background: #ffb703; color: #000; padding: 2px 8px; border-radius: 4px; font-weight: bold;">---</span></p>
+    <div class="panel-container">
+        <aside class="panel-menu">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="width: 80px; height: 80px; background: #e9ecef; border-radius: 50%; margin: 0 auto 10px auto; display: flex; align-items: center; justify-content: center; font-size: 35px; border: 3px solid #e63946;">👤</div>
+                <h3 style="margin: 0; color: var(--text-main);" id="nombre-usuario-menu">Juan Cardozo</h3>
             </div>
-        </div>
+            <a class="tab-link active" onclick="cambiarPestana('tab-perfil', this)">🚗 Mi Vehículo</a>
+            <a class="tab-link" onclick="cambiarPestana('tab-favoritos', this)">❤️ Talleres Guardados</a>
+            <a class="tab-link" id="btn-tab-mensajes" onclick="cambiarPestana('tab-mensajes', this)">💬 Mensajes Internos</a>
+            <a class="tab-link" onclick="cambiarPestana('tab-citas', this)">📅 Historial y Citas</a>
+        </aside>
 
-        <h3 style="color: var(--text-main); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">❤️ Mis Talleres Guardados</h3>
-        <div id="contenedor-favoritos" class="favoritos-grid"></div>
-    </div>
+        <main class="panel-content">
+            <h2 id="titulo-seccion" style="margin-top: 0;">Datos del Vehículo y Perfil</h2>
 
-    <!-- MODAL PARA ESCRIBIR RESEÑA -->
-    <div id="modal-resena" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <span class="close-btn" onclick="cerrarModalResena()" style="float: right; cursor: pointer; font-size: 24px;">&times;</span>
-            <h2 style="color: var(--text-main); margin-bottom: 10px;">Calificar Taller</h2>
-            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 15px;">Tu opinión ayuda a la comunidad.</p>
-            <div class="estrellas-rating" id="caja-estrellas" style="text-align: center; margin-bottom: 15px;">
-                <span onclick="marcarEstrellas(1)">★</span><span onclick="marcarEstrellas(2)">★</span><span onclick="marcarEstrellas(3)">★</span><span onclick="marcarEstrellas(4)">★</span><span onclick="marcarEstrellas(5)">★</span>
+            <!-- PESTAÑA 1: PERFIL -->
+            <div id="tab-perfil" class="tab-seccion active">
+                <div class="seccion-form">
+                    <h3>1. Información Personal</h3>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 200px;"><label class="label-form">Nombre Completo</label><input type="text" class="input-form" value="Juan Cardozo" id="perfil-nombre" disabled></div>
+                        <div style="flex: 1; min-width: 200px;"><label class="label-form">Celular</label><input type="text" class="input-form" value="300 123 4567"></div>
+                    </div>
+                </div>
+
+                <div class="seccion-form">
+                    <h3>2. Datos de mi Vehículo</h3>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: -10px;">Esta información facilita tus cotizaciones en el chat.</p>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <div style="flex: 2; min-width: 150px;"><label class="label-form">Marca y Modelo</label><input type="text" class="input-form" id="input-marca" placeholder="Ej. Chevrolet Spark GT"></div>
+                        <div style="flex: 1; min-width: 100px;"><label class="label-form">Placa</label><input type="text" class="input-form" id="input-placa" placeholder="XYZ-123"></div>
+                    </div>
+                    <button class="btn-primary" style="margin-top: 10px;" onclick="guardarPerfil(this)">Guardar Datos</button>
+                </div>
             </div>
-            <input type="hidden" id="estrellas-valor" value="5">
-            <input type="hidden" id="taller-id-resena" value="">
-            <textarea id="texto-resena" class="input-form" rows="4" placeholder="Escribe tu experiencia aquí..."></textarea>
-            <button class="btn-primary btn-block" style="padding: 15px;" onclick="guardarResena()">Publicar Reseña</button>
-        </div>
+
+            <!-- PESTAÑA 2: FAVORITOS -->
+            <div id="tab-favoritos" class="tab-seccion">
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Aquí tienes acceso rápido a los talleres que marcaste con un corazón (❤️) en el directorio.</p>
+                <div id="contenedor-mis-favoritos" class="favoritos-grid"></div>
+            </div>
+
+            <!-- PESTAÑA 3: MENSAJES -->
+            <div id="tab-mensajes" class="tab-seccion">
+                <p style="color: var(--text-muted); margin-top: -10px; margin-bottom: 20px;">Comunícate directamente con los talleres de Fontibón sin salir de la plataforma.</p>
+                <div class="chat-container-layout">
+                    <div class="chat-list" id="lista-chats-cliente"></div>
+                    <div class="chat-box" id="ventana-chat-cliente">
+                        <div class="chat-header" id="chat-header-cliente">Taller</div>
+                        <div class="chat-messages" id="chat-messages-cliente"></div>
+                        <div class="chat-input-area">
+                            <input type="text" class="chat-input" id="input-msg-cliente" placeholder="Escribe un mensaje..." onkeypress="if(event.key === 'Enter') enviarMensajeCliente()">
+                            <button class="chat-send" onclick="enviarMensajeCliente()">➤</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PESTAÑA 4: CITAS CON MAPA -->
+            <div id="tab-citas" class="tab-seccion">
+                <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+                    
+                    <!-- Columna de Lista de Citas -->
+                    <div style="flex: 1; min-width: 300px;">
+                        <h3 style="margin-top: 0;">Próximas Citas</h3>
+                        <div class="cita-box">
+                            <div><strong style="color: var(--text-main); font-size: 16px;">🔧 Motojasvy (Revisión)</strong><div style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">📅 Mañana, 10:00 AM</div></div>
+                            <div><span class="badge-estado estado-confirmada">Confirmada</span></div>
+                        </div>
+                        <h3 style="margin-top: 30px;">Historial de Servicios</h3>
+                        <div class="cita-box pasada">
+                            <div><strong style="color: var(--text-main); font-size: 16px;">🚗 Alta Gama Arteda</strong><div style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">📅 15 Octubre 2026</div></div>
+                            <div><span class="badge-estado estado-completada">Completada</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Columna del Mapa de Citas -->
+                    <div style="flex: 1; min-width: 300px;">
+                        <h3 style="margin-top: 0;">📍 Ubicación de tus Citas</h3>
+                        <div style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); height: 350px; box-shadow: 0 4px 10px var(--shadow-color);">
+                            <!-- Mapa centrado en la cita actual -->
+                            <iframe src="https://maps.google.com/maps?q=Calle+17+Fontibon,Bogota&hl=es&z=15&output=embed" width="100%" height="100%" style="border:0;"></iframe>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
     </div>
 
     <script src="js/main.js"></script>
     <script>
+        let nombreUsuarioActual = "Juan Cardozo";
+        let chatActivoId = null;
+
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('display-vehiculo').innerText = (localStorage.getItem('miVehiculo') || 'No especificado').toUpperCase();
-            document.getElementById('display-placa').innerText = (localStorage.getItem('miPlaca') || 'Sin placa').toUpperCase();
-            cargarTarjetasFavoritas(); marcarEstrellas(5);
+            inicializarBaseDatosChat();
+            let vehiculo = localStorage.getItem('miVehiculo') || '';
+            let placa = localStorage.getItem('miPlaca') || '';
+            if(vehiculo) document.getElementById('input-marca').value = vehiculo;
+            if(placa) document.getElementById('input-placa').value = placa;
+            renderizarListaChatsCliente();
         });
 
-        function cargarTarjetasFavoritas() {
-            let favoritos = JSON.parse(localStorage.getItem('misFavoritos')) || [];
-            let contenedor = document.getElementById('contenedor-favoritos');
-            if (favoritos.length === 0) {
-                contenedor.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: var(--bg-card); border-radius: 12px; border: 1px dashed var(--border-color);"><span style="font-size: 40px;">💔</span><h4 style="color: var(--text-main); margin-top: 15px;">Aún no tienes talleres guardados</h4><a href="talleres.html" class="btn-primary" style="display: inline-block; margin-top: 15px;">Explorar Directorio</a></div>`;
-                return;
+        function cambiarPestana(idTab, elementoBoton) {
+            reproducirSonidoUI();
+            document.querySelectorAll('.tab-seccion').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-link').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(idTab).classList.add('active');
+            elementoBoton.classList.add('active');
+            let titulos = { 'tab-perfil': 'Datos del Vehículo y Perfil', 'tab-favoritos': 'Mis Talleres Guardados', 'tab-mensajes': 'Centro de Mensajes Internos', 'tab-citas': 'Historial y Mapa de Citas' };
+            document.getElementById('titulo-seccion').innerText = titulos[idTab];
+            if (idTab === 'tab-favoritos') renderizarFavoritosUsuario();
+            if (idTab === 'tab-mensajes') renderizarListaChatsCliente();
+        }
+
+        function guardarPerfil(btn) {
+            reproducirSonidoExito();
+            localStorage.setItem('miVehiculo', document.getElementById('input-marca').value);
+            localStorage.setItem('miPlaca', document.getElementById('input-placa').value);
+            let t = btn.innerText; btn.innerText = '✅ Datos Actualizados'; btn.style.background = '#28a745';
+            setTimeout(() => { btn.innerText = t; btn.style.background = ''; }, 2000);
+        }
+
+        function renderizarFavoritosUsuario() {
+            let contenedor = document.getElementById('contenedor-mis-favoritos');
+            let favoritosIDs = JSON.parse(localStorage.getItem('misFavoritos')) || [];
+            if (favoritosIDs.length === 0) {
+                contenedor.innerHTML = `<div class="empty-state"><span style="font-size: 40px;">💔</span><h3>Aún no tienes talleres favoritos</h3><p>Explora el directorio y haz clic en el corazón (🤍) de un taller para guardarlo.</p><a href="index.html" class="btn-primary" style="display:inline-block; margin-top:15px;">Explorar Talleres</a></div>`;
+                contenedor.style.display = 'block'; return;
             }
+            contenedor.style.display = 'grid';
             let html = '';
-            favoritos.forEach(id => {
-                if(baseDatosTalleres[id]) {
-                    let t = baseDatosTalleres[id];
-                    let btnCalificar = `<button class="btn-outline" style="font-size: 13px; width: 100%; margin-top:10px; border-color:#ffb703; color:#b78200;" onclick="abrirModalResena('${id}')">⭐ Dejar Reseña</button>`;
-                    html += `<div class="card" style="margin-bottom: 0;"><div class="card-img" style="height: 140px; background-image: url('${t.img}'); background-size: cover; background-position: center;"></div><div class="card-body"><div style="display: flex; justify-content: space-between; align-items: flex-start;"><h2 class="card-title" style="font-size: 16px;">${t.nombre}</h2><button class="btn-quitar" onclick="quitarDeFavoritos('${id}')">❤️</button></div><div class="card-location" style="margin-bottom: 10px;">${t.dir}</div><a href="perfil.html?id=${id}" class="btn-primary" style="font-size: 13px; width:100%; display:block; text-align:center;">Ver Perfil</a>${btnCalificar}</div></div>`;
+            favoritosIDs.forEach(id => {
+                let t = baseDatosTalleres[id];
+                if (t) {
+                    html += `
+                        <div style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--bg-card); position: relative;">
+                            <button onclick="eliminarFavDesdePanel('${t.id}')" style="position:absolute; top:10px; right:10px; background: rgba(255,255,255,0.9); color: #dc3545; border: 1px solid #dc3545; border-radius:50%; width:30px; height:30px; cursor:pointer; font-weight:bold; z-index:5; display:flex; align-items:center; justify-content:center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: 0.2s;" onmouseover="this.style.background='#dc3545'; this.style.color='#fff';" onmouseout="this.style.background='rgba(255,255,255,0.9)'; this.style.color='#dc3545';">✖</button>
+                            <div style="height: 100px; background-image: url('${t.img}'); background-size: cover; background-position: center;"></div>
+                            <div style="padding: 15px;">
+                                <h4 style="margin: 0 0 5px 0; color: var(--text-main);">${t.nombre}</h4>
+                                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 10px;">${t.dir}</div>
+                                <div style="display: flex; gap: 5px;">
+                                    <button class="btn-primary" onclick="iniciarChatInterno('${t.nombre}')" style="flex:1; padding: 8px; font-size: 12px; background:#4361ee; border-color:#4361ee;">💬 Mensaje</button>
+                                    <button class="btn-whatsapp" onclick="contactarWhatsApp('${t.ws}', '${t.nombre}')" style="flex:1; padding: 8px; font-size: 12px;">📱 WhatsApp</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 }
             });
             contenedor.innerHTML = html;
         }
 
-        function quitarDeFavoritos(id) { reproducirSonidoUI(); let favs = JSON.parse(localStorage.getItem('misFavoritos')) || []; favs = favs.filter(f => f !== id); localStorage.setItem('misFavoritos', JSON.stringify(favs)); cargarTarjetasFavoritas(); }
-        function abrirModalResena(idTaller) { reproducirSonidoUI(); document.getElementById('taller-id-resena').value = idTaller; document.getElementById('modal-resena').style.display = 'flex'; }
-        function cerrarModalResena() { document.getElementById('modal-resena').style.display = 'none'; }
-        function marcarEstrellas(num) { reproducirSonidoUI(); document.getElementById('estrellas-valor').value = num; let estrellas = document.getElementById('caja-estrellas').querySelectorAll('span'); estrellas.forEach((e, index) => { if(index < num) e.classList.add('activa'); else e.classList.remove('activa'); }); }
-        
-        function guardarResena() {
-            let id = document.getElementById('taller-id-resena').value; let txt = document.getElementById('texto-resena').value; let estrellas = parseInt(document.getElementById('estrellas-valor').value);
-            let resenasGuardadas = JSON.parse(localStorage.getItem('resenasUsuarios')) || {}; if(!resenasGuardadas[id]) resenasGuardadas[id] = [];
-            resenasGuardadas[id].unshift({ autor: 'Juan (Cliente Registrado)', inicial: 'J', color: '#e63946', fecha: 'Justo ahora', estrellas: '⭐'.repeat(estrellas), texto: txt });
-            localStorage.setItem('resenasUsuarios', JSON.stringify(resenasGuardadas));
-            reproducirSonidoExito(); cerrarModalResena(); alert("¡Gracias! Tu reseña ha sido publicada en el perfil del taller.");
+        function eliminarFavDesdePanel(id) {
+            reproducirSonidoUI();
+            let favoritos = JSON.parse(localStorage.getItem('misFavoritos')) || [];
+            favoritos = favoritos.filter(favId => favId !== id);
+            localStorage.setItem('misFavoritos', JSON.stringify(favoritos));
+            renderizarFavoritosUsuario();
+        }
+
+        function inicializarBaseDatosChat() {
+            if(!localStorage.getItem('bd_mensajes')) {
+                let mockDB = [{ id: "chat_1", taller: "Motojasvy", cliente: "Juan Cardozo", mensajes: [{ remitente: "cliente", texto: "Hola, ¿tienen disponibilidad para revisar los frenos?", hora: "10:30 AM" }, { remitente: "taller", texto: "¡Hola Juan! Sí, claro. Puedes traer el vehículo a partir de las 8:00 AM.", hora: "10:45 AM" }] }];
+                localStorage.setItem('bd_mensajes', JSON.stringify(mockDB));
+            }
+        }
+
+        function iniciarChatInterno(nombreTallerDestino) {
+            reproducirSonidoExito();
+            let db = JSON.parse(localStorage.getItem('bd_mensajes')) || [];
+            let chatExistente = db.find(c => c.taller === nombreTallerDestino && c.cliente === nombreUsuarioActual);
+            if(!chatExistente) {
+                chatExistente = { id: "chat_" + Date.now(), taller: nombreTallerDestino, cliente: nombreUsuarioActual, mensajes: [] };
+                db.push(chatExistente); localStorage.setItem('bd_mensajes', JSON.stringify(db));
+            }
+            cambiarPestana('tab-mensajes', document.getElementById('btn-tab-mensajes'));
+            abrirChatCliente(chatExistente.id);
+        }
+
+        function renderizarListaChatsCliente() {
+            let db = JSON.parse(localStorage.getItem('bd_mensajes')) || [];
+            let misChats = db.filter(c => c.cliente === nombreUsuarioActual);
+            let listaHTML = document.getElementById('lista-chats-cliente');
+            if(misChats.length === 0) { listaHTML.innerHTML = `<p style="padding:10px; color:var(--text-muted); font-size:13px; text-align:center;">No tienes conversaciones iniciadas.</p>`; return; }
+            let html = '';
+            misChats.forEach(chat => {
+                let ultimoMsg = chat.mensajes.length > 0 ? chat.mensajes[chat.mensajes.length-1].texto : "Haz clic para escribir...";
+                let activoClass = chatActivoId === chat.id ? 'active' : '';
+                html += `<div class="chat-item ${activoClass}" onclick="abrirChatCliente('${chat.id}')"><h4>🔧 ${chat.taller}</h4><p>${ultimoMsg}</p></div>`;
+            });
+            listaHTML.innerHTML = html;
+        }
+
+        function abrirChatCliente(idChat) {
+            reproducirSonidoUI(); chatActivoId = idChat; renderizarListaChatsCliente(); 
+            let db = JSON.parse(localStorage.getItem('bd_mensajes')) || [];
+            let chat = db.find(c => c.id === idChat);
+            document.getElementById('ventana-chat-cliente').style.display = 'flex';
+            document.getElementById('chat-header-cliente').innerText = "🔧 " + chat.taller;
+            let htmlBurbujas = '';
+            chat.mensajes.forEach(m => {
+                let clase = m.remitente === 'cliente' ? 'msg-cliente' : 'msg-taller';
+                htmlBurbujas += `<div class="mensaje ${clase}">${m.texto}<div style="font-size:9px; text-align:right; margin-top:3px; opacity:0.7;">${m.hora}</div></div>`;
+            });
+            let caja = document.getElementById('chat-messages-cliente'); caja.innerHTML = htmlBurbujas; caja.scrollTop = caja.scrollHeight; 
+        }
+
+        function enviarMensajeCliente() {
+            let input = document.getElementById('input-msg-cliente'); let texto = input.value.trim();
+            if(!texto || !chatActivoId) return;
+            reproducirSonidoExito();
+            let db = JSON.parse(localStorage.getItem('bd_mensajes')) || []; let index = db.findIndex(c => c.id === chatActivoId);
+            let ahora = new Date(); let hora = ahora.getHours() + ':' + (ahora.getMinutes()<10?'0':'') + ahora.getMinutes();
+            db[index].mensajes.push({ remitente: "cliente", texto: texto, hora: hora });
+            localStorage.setItem('bd_mensajes', JSON.stringify(db));
+            input.value = ''; abrirChatCliente(chatActivoId); 
         }
     </script>
 </body>

@@ -3,176 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Panel Automotriz | AutoConecta</title>
+    <title>Mi Panel | AutoConecta</title>
     <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .dashboard-wrapper { max-width: 1150px; margin: 30px auto; padding: 20px; }
-        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .kpi-card { background: var(--bg-card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px var(--shadow-color); border: 1px solid var(--border-color); border-left: 5px solid #e63946; position: relative; overflow: hidden;}
-        .kpi-card h4 { color: var(--text-muted); font-size: 13px; margin-bottom: 10px; text-transform: uppercase; font-weight: bold;}
-        .kpi-card .number { font-size: 32px; font-weight: 900; color: var(--text-main); line-height: 1; margin-bottom: 5px;}
-        .kpi-card .trend { font-size: 12px; color: #28a745; font-weight: bold; }
-        .charts-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 20px; margin-bottom: 30px; }
-        @media (max-width: 850px) { .charts-grid { grid-template-columns: 1fr; } }
-        .chart-container { background: var(--bg-card); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px var(--shadow-color); border: 1px solid var(--border-color); position: relative; display: flex; flex-direction: column;}
-        .plan-banner { color: #fff; padding: 25px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid #ffb703; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;}
-        .ia-insights { background: linear-gradient(145deg, #f8f9fa, #e9ecef); border: 1px solid #dee2e6; padding: 20px; border-radius: 12px; margin-bottom: 30px; }
-        [data-theme="dark"] .ia-insights { background: linear-gradient(145deg, #2a2a2a, #1a1a1a); border-color: #444; }
-        .close-btn { color: var(--text-muted); float: right; font-size: 28px; font-weight: bold; cursor: pointer; line-height: 1; margin-top: -10px; transition: color 0.2s; }
-        .close-btn:hover { color: #e63946; }
-        .editor-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px; }
-        .preview-box { background: var(--bg-main); padding: 20px; border-radius: 12px; border: 2px dashed var(--border-color); display: flex; flex-direction: column; justify-content: flex-start; position: sticky; top: 20px; }
-        .upload-zone { background: #fffdf7; border: 2px dashed #ffb703; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 15px; position: relative;}
-        .candado-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; border-radius: inherit; text-align: center;}
-        [data-theme="dark"] .candado-overlay { background: rgba(30,30,30,0.9); }
+        .panel-container { display: grid; grid-template-columns: 250px 1fr; gap: 20px; max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        @media (max-width: 768px) { .panel-container { grid-template-columns: 1fr; } }
+        .panel-menu { background: var(--bg-card); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color); height: fit-content; }
+        .panel-menu a { display: block; padding: 12px 15px; color: var(--text-main); text-decoration: none; border-radius: 8px; margin-bottom: 5px; transition: 0.2s; font-weight: bold; cursor: pointer; }
+        .panel-menu a:hover, .panel-menu a.active { background: #e63946; color: #fff; }
+        .panel-content { background: var(--bg-card); border-radius: 12px; padding: 30px; border: 1px solid var(--border-color); min-height: 500px; }
+        .tab-seccion { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-seccion.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .seccion-form { border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 20px; position: relative; overflow: hidden; }
+        .seccion-form h3 { margin-top: 0; color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; }
+        .bloqueado { opacity: 0.4; pointer-events: none; filter: grayscale(100%); }
+        .lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10; display: none; flex-direction: column; align-items: center; justify-content: center; color: #fff; text-align: center; }
+        .bloqueado .lock-overlay { display: flex; pointer-events: auto; }
+        .btn-upgrade { background: #ffb703; color: #000; padding: 8px 20px; border-radius: 20px; text-decoration: none; font-weight: bold; margin-top: 10px; transition: 0.2s; border: none; cursor: pointer; }
+        .btn-upgrade:hover { transform: scale(1.05); }
+        .badge-actual { display: inline-block; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; margin-bottom: 20px; }
+        .badge-gratis { background: #e9ecef; color: #495057; border: 1px solid #ced4da; }
+        .badge-pro { background: rgba(67, 97, 238, 0.1); color: #4361ee; border: 1px solid #4361ee; }
+        .badge-elite { background: linear-gradient(90deg, #ffb703, #ff8c00); color: #fff; box-shadow: 0 4px 10px rgba(255, 183, 3, 0.3); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-box { background: var(--bg-main); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; text-align: center; }
+        .stat-box h4 { margin: 0 0 10px 0; color: var(--text-muted); font-size: 13px; }
+        .stat-box p { margin: 0; font-size: 28px; font-weight: bold; color: #e63946; }
+        .planes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px; }
+        .plan-card { border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; text-align: center; background: var(--bg-main); transition: 0.3s; }
+        .plan-card.plan-activo { border: 2px solid #28a745; box-shadow: 0 0 15px rgba(40, 167, 69, 0.2); }
+        
+        /* CHAT */
+        .chat-container-layout { display: flex; gap: 20px; flex-wrap: wrap; }
+        .chat-list { flex: 1; min-width: 250px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-main); height: 450px; overflow-y: auto; padding: 10px; }
+        .chat-item { padding: 12px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; margin-bottom: 5px; transition: 0.2s; background: var(--bg-card); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .chat-item:hover, .chat-item.active { border-color: #e63946; background: rgba(230, 57, 70, 0.05); }
+        .chat-item h4 { margin: 0 0 5px 0; color: var(--text-main); font-size: 14px; }
+        .chat-item p { margin: 0; font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chat-box { flex: 2; min-width: 300px; border: 1px solid var(--border-color); border-radius: 8px; display: none; flex-direction: column; height: 450px; background: var(--bg-main); overflow: hidden; }
+        .chat-header { background: var(--bg-card); padding: 15px; border-bottom: 1px solid var(--border-color); font-weight: bold; font-size: 16px; color: var(--text-main); }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .mensaje { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 13px; position: relative; }
+        .msg-cliente { background: #e9ecef; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; }
+        [data-theme="dark"] .msg-cliente { background: #333; color: #fff; }
+        .msg-taller { background: #4361ee; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .chat-input-area { display: flex; padding: 10px; border-top: 1px solid var(--border-color); background: var(--bg-card); }
+        .chat-input { flex: 1; padding: 10px 15px; border: 1px solid var(--border-color); border-radius: 20px; outline: none; background: var(--bg-main); color: var(--text-main); }
+        .chat-send { background: #4361ee; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; margin-left: 10px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .chat-send:hover { transform: scale(1.1); }
+        
+        .grid-servicios { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; background: var(--bg-main); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 10px; }
+        .grid-servicios label { font-size: 13px; color: var(--text-main); display: flex; align-items: center; gap: 8px; cursor: pointer; }
     </style>
 </head>
-<body style="background: var(--bg-main);">
-    
+<body>
+
     <header>
-        <div class="logo"><a href="index.html" style="color: inherit; text-decoration: none;">⚙️ Panel de Control</a></div>
-        <nav class="main-nav"><a href="index.html">← Ver página principal</a></nav>
-        <div class="user-actions" id="user-actions-container"></div>
+        <div class="logo"><a href="index.html" style="color: inherit; text-decoration: none;">🔧 AutoConecta</a></div>
+        <div class="user-actions">
+            <a href="index.html" class="btn-outline">Ver Directorio</a>
+            <a href="#" class="btn-exit-elegant" onclick="cerrarSesion()">🚪 Salir</a>
+        </div>
     </header>
 
-    <div class="dashboard-wrapper">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
-            <div><h1 style="color: var(--text-main); margin-bottom: 5px;" id="titulo-panel">Rendimiento Comercial</h1><p style="color: var(--text-muted); margin:0;">Estadísticas en tiempo real de <strong id="nombre-taller-display" style="color: #ffb703; font-size: 18px;">...</strong></p></div>
-            <button class="btn-primary" onclick="abrirEditorPerfil()" style="font-size: 16px; padding: 12px 25px; box-shadow: 0 4px 10px rgba(230,57,70,0.3);">✏️ Editar Info del Taller</button>
-        </div>
-
-        <div class="plan-banner" id="banner-plan" style="background: linear-gradient(135deg, #222, #444);">
-            <div><h3 id="banner-titulo" style="color: #ffb703; font-size: 22px; margin-bottom: 5px;">★ Plan Élite Activo</h3><p id="banner-texto" style="font-size: 14px; opacity: 0.9; margin:0;">Posicionamiento Top #1 y analíticas completas desbloqueadas.</p></div>
-            <button id="btn-up-plan" onclick="abrirSuscripcion()" style="background: #ffb703; color: #000; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer;">Gestionar Suscripción</button>
-        </div>
-
-        <div class="ia-insights" id="panel-ia">
-            <h3 style="color: var(--text-main); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">🤖 Sugerencias del Sistema</h3>
-            <p id="texto-ia" style="color: var(--text-muted); font-size: 14px; margin:0; line-height: 1.6;">Cargando sugerencias de inteligencia artificial...</p>
-        </div>
-
-        <div class="kpi-grid" id="kpi-contenedor">
-            <div class="kpi-card" style="border-left-color: #4361ee;"><h4>👁️ Vistas de Perfil</h4><div class="number">1,245</div><div class="trend">▲ +12% esta semana</div></div>
-            <div class="kpi-card" id="kpi-ws" style="border-left-color: #28a745;"><h4>💬 Clics en WhatsApp</h4><div class="number">312</div><div class="trend">▲ +5% vs mes anterior</div></div>
-            <div class="kpi-card" style="border-left-color: #e63946;"><h4>❤️ Veces Guardado</h4><div class="number">89</div><div class="trend" style="color:#6c757d;">▶ Estable</div></div>
-            <div class="kpi-card" style="border-left-color: #ffb703;"><h4>⭐ Calif. Promedio</h4><div class="number">4.6<span style="font-size: 14px; color:#888;">/5</span></div><div class="trend">Basado en reseñas</div></div>
-        </div>
-
-        <div class="charts-grid">
-            <div class="chart-container" id="grafico-trafico">
-                <h3 style="color: var(--text-main); margin-bottom: 15px; font-size: 16px;">📈 Tráfico de Clientes (Últimos 7 días)</h3>
-                <div style="flex-grow: 1; position: relative; min-height: 200px;"><canvas id="traficoChart"></canvas></div>
+    <div class="panel-container">
+        <aside class="panel-menu">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="width: 80px; height: 80px; background: #ccc; border-radius: 50%; margin: 0 auto 10px auto; background-image: url('img/motojasvy.jpeg'); background-size: cover; border: 3px solid #e63946;"></div>
+                <h3 style="margin: 0; color: var(--text-main);" id="nombre-taller-menu">Mi Taller</h3>
             </div>
-            <div class="chart-container" id="grafico-comparativa">
-                <h3 style="color: var(--text-main); margin-bottom: 5px; font-size: 16px;">📊 Comparativa de Mercado (Fontibón)</h3>
-                <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 15px;">Vistas mensuales frente a tu competencia directa.</p>
-                <div style="flex-grow: 1; position: relative; min-height: 200px;"><canvas id="comparativaChart"></canvas></div>
-            </div>
-        </div>
-    </div>
+            <a class="tab-link active" onclick="cambiarPestana('tab-perfil', this)">✏️ Editar Perfil</a>
+            <a class="tab-link" onclick="cambiarPestana('tab-estadisticas', this)">📊 Estadísticas</a>
+            <a class="tab-link" id="btn-tab-mensajes" onclick="cambiarPestana('tab-mensajes', this)">💬 Bandeja de Entrada</a>
+            <a class="tab-link" onclick="cambiarPestana('tab-suscripcion', this)" style="background: #fff3cd; color: #856404; border: 1px solid #ffeeba; margin-top: 20px; text-align: center;">⭐ Mi Suscripción</a>
+        </aside>
 
-    <!-- MODAL GESTIONAR SUSCRIPCIÓN (REDIRECCIONA AL CHECKOUT) -->
-    <div id="modal-suscripcion" class="modal">
-        <div class="modal-content" style="max-width: 650px; width: 95%;">
-            <span class="close-btn" onclick="cerrarSuscripcion()">&times;</span>
-            <h2 style="margin-bottom: 10px; color: var(--text-main); text-align: center;">Planes de Suscripción</h2>
-            <p style="text-align: center; color: var(--text-muted); margin-bottom: 25px; font-size: 14px;">Impulsa tu negocio cambiando de plan.</p>
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                <div class="radio-box" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px;">
-                    <div><strong style="color: var(--text-main); font-size: 16px;">Plan Estándar (Gratis)</strong><p style="margin: 5px 0 0 0; font-size: 13px; color: var(--text-muted);">Sin WhatsApp ni estadísticas.</p></div>
-                    <button class="btn-outline" id="btn-plan-gratis" onclick="cambiarPlan('gratis')">Seleccionar</button>
-                </div>
-                <div class="radio-box premium-box" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px;">
-                    <div><strong style="color: var(--text-main); font-size: 16px;">Plan Profesional ($15.000 / mes)</strong><p style="margin: 5px 0 0 0; font-size: 13px; color: var(--text-muted);">Activa tu botón de WhatsApp, el mapa interactivo y tarjeta destacada.</p></div>
-                    <button class="btn-primary" id="btn-plan-pro" onclick="cambiarPlan('pro')">Mejorar a Pro</button>
-                </div>
-                <div class="radio-box" style="border-color: #ffb703; background: #fffdf7; padding: 20px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px;">
-                    <div><strong style="color: #ffb703; font-size: 18px;">★ Plan Élite ($60.000 / mes)</strong><p style="margin: 5px 0 0 0; font-size: 13px; color: var(--text-muted);">Top #1, analíticas completas e IA.</p></div>
-                    <button class="btn-primary" id="btn-plan-elite" style="background: #ffb703; color: #000;" onclick="cambiarPlan('elite')">Ser Élite</button>
-                </div>
+        <main class="panel-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <h2 id="titulo-seccion" style="margin-top: 0;">Configuración de Perfil</h2>
+                <div id="plan-badge-container" class="badge-actual badge-gratis">Plan Estándar (Gratis)</div>
             </div>
-        </div>
-    </div>
 
-    <!-- MODAL EDITOR VISUAL (Igual que antes, comprimido) -->
-    <div id="modal-editar-perfil" class="modal">
-        <div class="modal-content" style="max-width: 1000px; width: 95%; max-height: 95vh; overflow-y: auto;">
-            <span class="close-btn" onclick="cancelarEdicion()">&times;</span>
-            <h2 style="margin-bottom: 20px; color: var(--text-main);">Personaliza tu Taller</h2>
-            <div class="editor-grid">
-                <div style="padding-right: 15px;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;"><div><label style="font-size: 12px; font-weight: bold; color: var(--text-muted); display: block;">Nombre del Taller:</label><input type="text" id="edit-nombre" class="input-form" onkeyup="actualizarPreview()"></div><div style="position: relative;" id="caja-ws"><label style="font-size: 12px; font-weight: bold; color: var(--text-muted); display: block;">WhatsApp:</label><input type="tel" id="edit-ws" class="input-form"></div></div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;"><div><label style="font-size: 12px; font-weight: bold; color: var(--text-muted); display: block;">Dirección Exacta:</label><input type="text" id="edit-dir" class="input-form" onkeyup="actualizarPreview()"></div><div><label style="font-size: 12px; font-weight: bold; color: var(--text-muted); display: block;">Estado Operativo:</label><select id="edit-estado" class="input-form" onchange="actualizarPreview()"><option value="abierto">🟢 Abierto ahora</option><option value="cerrado">🔴 Cerrado</option><option value="24h">🌙 Abierto 24 Horas</option></select></div></div>
-                    <div style="display: flex; gap: 15px; margin-top: 25px;"><button class="btn-outline" style="flex: 1;" onclick="cancelarEdicion()">❌ Cancelar</button><button class="btn-primary" style="flex: 2; font-size: 16px;" onclick="guardarCambiosPerfil(event)">💾 Guardar Cambios</button></div>
+            <!-- PESTAÑA 1: EDITAR PERFIL Y MAPA -->
+            <div id="tab-perfil" class="tab-seccion active">
+                <div class="seccion-form">
+                    <h3>1. Información Básica y Ubicación</h3>
+                    
+                    <label class="label-form">Nombre del Taller</label>
+                    <input type="text" class="input-form" id="input-nombre" value="Mi Taller">
+                    
+                    <label class="label-form" style="margin-top: 15px;">Descripción corta</label>
+                    <textarea class="input-form" rows="2" placeholder="Escribe a qué se dedica tu taller..."></textarea>
+                    
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; margin-top: 15px;">
+                        <div style="flex: 2; min-width: 250px;">
+                            <label class="label-form">Dirección exacta</label>
+                            <input type="text" class="input-form" placeholder="Ej. Calle 17 #..." style="margin-bottom: 0;">
+                        </div>
+                        <div style="flex: 1; min-width: 150px;">
+                            <label class="label-form">Coordenadas</label>
+                            <button class="btn-outline" style="width: 100%; padding: 12px; border-color: #28a745; color: #28a745;" onclick="alert('Abriendo selector de coordenadas GPS...')">📍 Ajustar Pin</button>
+                        </div>
+                    </div>
+                    
+                    <!-- VISTA PREVIA DEL MAPA EN EL PANEL -->
+                    <label class="label-form">Vista Previa de tu Ubicación en el Directorio</label>
+                    <div style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); height: 250px; margin-bottom: 20px; box-shadow: 0 4px 10px var(--shadow-color);">
+                        <iframe src="https://maps.google.com/maps?q=4.677010,-74.149393&hl=es&z=16&output=embed" width="100%" height="100%" style="border:0;"></iframe>
+                    </div>
+                    
+                    <label class="label-form" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">Etiquetas de Servicio</label>
+                    <div class="grid-servicios">
+                        <label><input type="checkbox" checked> 🟢 Abierto Ahora</label>
+                        <label><input type="checkbox" checked> 📅 Abre Domingos</label>
+                        <label><input type="checkbox" checked> 🏍️ Motocicletas</label>
+                        <label><input type="checkbox"> 🚗 Vehículos Livianos</label>
+                        <label><input type="checkbox" checked> 🔧 Mecánica General</label>
+                        <label><input type="checkbox" checked> ⚙️ Venta Repuestos</label>
+                        <label><input type="checkbox" checked> 🛢️ Cambio de Aceite</label>
+                        <label><input type="checkbox" checked> 🛑 Frenos/Suspensión</label>
+                        <label><input type="checkbox" checked> 💻 Escáner</label>
+                    </div>
+                    <button class="btn-primary" style="margin-top: 20px;" onclick="guardarCambiosSimulados(this)">Guardar Cambios</button>
                 </div>
-                <div class="preview-box">
-                    <h3 style="font-size: 12px; text-align: center; color: #888; margin-bottom: 15px;">VISTA PREVIA DE TU TARJETA</h3>
-                    <div class="card premium-elite active" id="preview-card" style="margin-bottom: 0; pointer-events: none;"><div class="card-img" style="height: 130px; background: #eee;">Logo / Foto</div><div class="card-body"><div style="display: flex; justify-content: space-between;"><div class="badge-elite" id="preview-badge">★ TOP #1 (ÉLITE)</div></div><h2 class="card-title" id="preview-nombre">Nombre</h2><div class="stars" id="preview-stars">⭐⭐⭐⭐⭐ <span style="color:#888;">(4.9)</span></div><div class="status-container"><span class="status-dot" id="preview-dot"></span><span id="preview-estado">Abierto ahora</span></div><div class="card-location" id="preview-dir" style="font-size: 11px;">📍 Dirección</div></div></div>
+
+                <!-- (Las demás secciones siguen igual) -->
+                <div class="seccion-form" id="seccion-whatsapp">
+                    <div class="lock-overlay"><span style="font-size: 30px;">🔒</span><h4 style="margin: 10px 0 5px 0;">Perfil Ampliado Bloqueado</h4><button class="btn-upgrade" onclick="cambiarPestana('tab-suscripcion', document.querySelectorAll('.tab-link')[3])">Adquirir Plan PRO</button></div>
+                    <h3>2. Botón de WhatsApp y Conectividad</h3>
+                    <label class="label-form">Número de celular (con indicativo)</label>
+                    <input type="text" class="input-form" placeholder="Ej. 573001234567">
+                    <button class="btn-primary" onclick="guardarCambiosSimulados(this)">Vincular WhatsApp</button>
+                </div>
+
+                <div class="seccion-form" id="seccion-elite">
+                    <div class="lock-overlay"><span style="font-size: 30px;">👑</span><h4 style="margin: 10px 0 5px 0;">Exclusivo Plan Élite</h4><button class="btn-upgrade" onclick="cambiarPestana('tab-suscripcion', document.querySelectorAll('.tab-link')[3])">Ser ÉLITE hoy</button></div>
+                    <h3>3. Exposición Visual e Información</h3>
+                    <label class="label-form">Subir fotos a la galería destacada (Máx 5)</label><input type="file" class="input-form" multiple accept="image/*">
                 </div>
             </div>
-        </div>
+
+            <!-- PESTAÑA 2: ESTADÍSTICAS -->
+            <div id="tab-estadisticas" class="tab-seccion">
+                <div class="seccion-form" id="seccion-stats">
+                    <div class="lock-overlay"><span style="font-size: 30px;">📊</span><h4 style="margin: 10px 0 5px 0;">Estadísticas Bloqueadas</h4><button class="btn-upgrade" onclick="cambiarPestana('tab-suscripcion', document.querySelectorAll('.tab-link')[3])">Desbloquear Analíticas</button></div>
+                    <h3>Rendimiento del mes</h3>
+                    <div class="stats-grid"><div class="stat-box"><h4>👁️ Vistas</h4><p>1,245</p></div><div class="stat-box"><h4>📱 WhatsApp</h4><p>87</p></div><div class="stat-box"><h4>📍 Rutas</h4><p>342</p></div></div>
+                </div>
+            </div>
+
+            <!-- PESTAÑA 3: MENSAJES -->
+            <div id="tab-mensajes" class="tab-seccion">
+                <div class="chat-container-layout">
+                    <div class="chat-list" id="lista-chats-taller"></div>
+                    <div class="chat-box" id="ventana-chat-taller">
+                        <div class="chat-header" id="chat-header-taller">Cliente</div>
+                        <div class="chat-messages" id="chat-messages-taller"></div>
+                        <div class="chat-input-area"><input type="text" class="chat-input" id="input-msg-taller" placeholder="Escribe tu respuesta..." onkeypress="if(event.key === 'Enter') enviarMensajeTaller()"><button class="chat-send" onclick="enviarMensajeTaller()">➤</button></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PESTAÑA 4: SUSCRIPCIÓN -->
+            <div id="tab-suscripcion" class="tab-seccion">
+                <div class="planes-grid">
+                    <div class="plan-card" id="card-gratis"><h3 style="margin-top:0;">Plan Estándar</h3><p style="font-size:24px; font-weight:bold; margin:10px 0;">Gratis</p><button class="btn-outline" style="width:100%;" onclick="activarPlanInmediato('gratis')">Cambiar a Gratis</button></div>
+                    <div class="plan-card" id="card-pro" style="border-color:#4361ee;"><h3 style="margin-top:0; color:#4361ee;">Plan PRO</h3><p style="font-size:24px; font-weight:bold; margin:10px 0; color:#4361ee;">$15.000</p><a href="checkout.html?plan=pro" class="btn-primary" style="display:block; background:#4361ee;">Adquirir PRO</a></div>
+                    <div class="plan-card" id="card-elite" style="border-color:#ffb703; background:#fffdf7;"><h3 style="margin-top:0; color:#ffb703;">★ Plan ÉLITE</h3><p style="font-size:24px; font-weight:bold; margin:10px 0; color:#ffb703;">$60.000</p><a href="checkout.html?plan=elite" class="btn-primary" style="display:block; background:#ffb703; color:#000;">Adquirir ÉLITE</a></div>
+                </div>
+            </div>
+
+        </main>
     </div>
 
     <script src="js/main.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            let miPlan = sessionStorage.getItem('miTallerPlan') || 'elite'; let miNombre = localStorage.getItem('miTallerNombre') || 'Tu Taller';
-            let banner = document.getElementById('banner-plan'); let bannerTit = document.getElementById('banner-titulo'); let bannerTxt = document.getElementById('banner-texto'); let btnUp = document.getElementById('btn-up-plan'); let panelIa = document.getElementById('panel-ia'); let inputWs = document.getElementById('edit-ws'); let zonaImg = document.getElementById('zona-imagenes'); let graficoComparativa = document.getElementById('grafico-comparativa');
-            
-            let competidorIA = 'Motos Eduard La 17'; let nombreBuscado = miNombre.toLowerCase();
-            if (nombreBuscado.includes('eduar') || nombreBuscado.includes('gama')) { competidorIA = 'Motojasvy'; } else if (nombreBuscado.includes('jasvy')) { competidorIA = 'Motos Eduard La 17'; } else { competidorIA = 'Caminic Motors'; }
-            document.getElementById('texto-ia').innerHTML = `<strong>1. ¡Atención!</strong> Tu competencia directa (<strong>${competidorIA}</strong>) tiene más fotos recientes.<br><strong>2. Oportunidad:</strong> Los usuarios buscan mucho "Escáner Computarizado". Asegúrate de encender ese filtro.`;
+        let planActual = sessionStorage.getItem('miTallerPlan') || 'gratis';
+        let nombreTallerGlobal = localStorage.getItem('miTallerNombre') || 'Motojasvy';
+        let chatActivoId = null;
 
-            if (miPlan === 'elite') { dibujarGraficoTrafico(); dibujarGraficoComparativa(miNombre); btnUp.innerText = 'Gestionar Suscripción'; } 
-            else if (miPlan === 'pro') {
-                banner.style.background = 'linear-gradient(135deg, #111, #333)'; banner.style.borderLeftColor = '#fff'; bannerTit.innerHTML = '★ Plan Profesional Activo'; bannerTit.style.color = '#fff'; bannerTxt.innerText = 'Sube a Élite para desbloquear comparativas de mercado y multimedia.'; btnUp.innerText = 'Subir a Élite'; panelIa.style.display = 'none'; 
-                graficoComparativa.innerHTML += '<div class="candado-overlay"><span style="font-size: 40px; margin-bottom:10px;">🔒</span><h3 style="color:#333; margin:0;">Comparativa Bloqueada</h3></div>';
-                dibujarGraficoTrafico(); 
-                document.getElementById('preview-card').className = 'card premium-profesional'; document.getElementById('preview-badge').className = 'badge-profesional'; document.getElementById('preview-badge').innerText = '★ DESTACADO (PRO)';
-            } else if (miPlan === 'gratis') {
-                banner.style.background = 'linear-gradient(135deg, #f8f9fa, #e9ecef)'; banner.style.borderLeftColor = '#6c757d'; bannerTit.innerHTML = 'Plan Estándar (Gratis)'; bannerTit.style.color = '#343a40'; bannerTxt.innerText = 'Mejora tu plan para habilitar WhatsApp, Estadísticas y Galería.'; bannerTxt.style.color = '#495057'; btnUp.innerText = 'Mejorar Plan'; panelIa.style.display = 'none';
-                inputWs.disabled = true; inputWs.value = "Bloqueado"; inputWs.style.background = "#fff3cd"; inputWs.style.borderColor = "#ffeeba"; inputWs.style.color = "#856404";
-                document.getElementById('caja-ws').innerHTML += '<div class="candado-overlay" style="background:rgba(255,255,255,0.6); border-radius:4px;"><span style="font-size:18px;">🔒</span></div>';
-                document.getElementById('kpi-ws').innerHTML += '<div class="candado-overlay"><span style="font-size:30px;">🔒</span></div>';
-                document.getElementById('grafico-trafico').innerHTML += '<div class="candado-overlay"><span style="font-size: 40px; margin-bottom:10px;">🔒</span><h3 style="color:#333; margin:0;">Gráficos Bloqueados</h3></div>';
-                graficoComparativa.innerHTML += '<div class="candado-overlay"><span style="font-size: 40px; margin-bottom:10px;">🔒</span><h3 style="color:#333; margin:0;">Comparativa Bloqueada</h3></div>';
-                document.getElementById('preview-card').className = 'card'; document.getElementById('preview-badge').style.display = 'none'; 
-            }
-            cargarDatosGuardados();
+        document.addEventListener('DOMContentLoaded', () => {
+            inicializarBaseDatosChat();
+            document.getElementById('nombre-taller-menu').innerText = nombreTallerGlobal;
+            document.getElementById('input-nombre').value = nombreTallerGlobal;
+            aplicarReglasDePlan();
+            let db = JSON.parse(localStorage.getItem('bd_mensajes')) || [];
+            let misChats = db.filter(c => c.taller === nombreTallerGlobal);
+            document.getElementById('btn-tab-mensajes').innerText = `💬 Bandeja de Entrada (${misChats.length})`;
         });
 
-        function abrirSuscripcion() {
+        function cambiarPestana(idTab, elementoBoton) {
             reproducirSonidoUI();
-            let miPlan = sessionStorage.getItem('miTallerPlan') || 'elite';
-            let btnG = document.getElementById('btn-plan-gratis'); let btnP = document.getElementById('btn-plan-pro'); let btnE = document.getElementById('btn-plan-elite');
-            btnG.innerText = 'Seleccionar'; btnG.disabled = false; btnG.style.opacity = '1'; btnP.innerText = 'Mejorar a Pro'; btnP.disabled = false; btnP.style.opacity = '1'; btnE.innerText = 'Ser Élite'; btnE.disabled = false; btnE.style.opacity = '1';
-            let btnActual = document.getElementById('btn-plan-' + miPlan);
-            if (btnActual) { btnActual.innerText = 'Plan Actual'; btnActual.disabled = true; btnActual.style.opacity = '0.5'; }
-            document.getElementById('modal-suscripcion').style.display = 'flex';
+            document.querySelectorAll('.tab-seccion').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-link').forEach(btn => { btn.classList.remove('active'); if(btn.innerText.includes('Mi Suscripción')) { btn.style.background = '#fff3cd'; btn.style.color = '#856404'; } });
+            document.getElementById(idTab).classList.add('active'); elementoBoton.classList.add('active');
+            if(idTab === 'tab-suscripcion') { elementoBoton.style.background = '#e63946'; elementoBoton.style.color = '#fff'; }
+            let titulos = { 'tab-perfil': 'Configuración de Perfil', 'tab-estadisticas': 'Analíticas de Visibilidad', 'tab-mensajes': 'Bandeja de Mensajes', 'tab-suscripcion': 'Mi Suscripción' };
+            document.getElementById('titulo-seccion').innerText = titulos[idTab];
+            if (idTab === 'tab-mensajes') renderizarListaChatsTaller();
         }
-        function cerrarSuscripcion() { document.getElementById('modal-suscripcion').style.display = 'none'; }
-        function cambiarPlan(nuevoPlan) { reproducirSonidoUI(); window.location.href = 'checkout.html?plan=' + nuevoPlan; }
 
-        function dibujarGraficoTrafico() {
-            const ctx = document.getElementById('traficoChart').getContext('2d');
-            new Chart(ctx, { type: 'line', data: { labels: ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'], datasets: [{ label: 'Visitas Diarias', data: [120, 150, 180, 140, 210, 350, 90], borderColor: '#e63946', backgroundColor: 'rgba(230, 57, 70, 0.2)', borderWidth: 3, pointBackgroundColor: '#e63946', fill: true, tension: 0.4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } } });
+        function aplicarReglasDePlan() {
+            let badgeContainer = document.getElementById('plan-badge-container'); let secWhatsApp = document.getElementById('seccion-whatsapp'); let secElite = document.getElementById('seccion-elite'); let secStats = document.getElementById('seccion-stats');
+            secWhatsApp.classList.remove('bloqueado'); secElite.classList.remove('bloqueado'); secStats.classList.remove('bloqueado');
+            document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('plan-activo'));
+
+            if (planActual === 'elite') {
+                badgeContainer.className = 'badge-actual badge-elite'; badgeContainer.innerText = '👑 Plan Élite (Activo)';
+                document.getElementById('card-elite').classList.add('plan-activo'); document.querySelector('#card-elite .btn-primary').innerText = 'Plan Actual'; document.querySelector('#card-elite .btn-primary').style.pointerEvents = 'none';
+            } else if (planActual === 'pro') {
+                badgeContainer.className = 'badge-actual badge-pro'; badgeContainer.innerText = '⭐ Plan Profesional (Activo)'; secElite.classList.add('bloqueado');
+                document.getElementById('card-pro').classList.add('plan-activo'); document.querySelector('#card-pro .btn-primary').innerText = 'Plan Actual'; document.querySelector('#card-pro .btn-primary').style.pointerEvents = 'none';
+            } else {
+                badgeContainer.className = 'badge-actual badge-gratis'; badgeContainer.innerText = 'Plan Estándar (Gratis)'; secWhatsApp.classList.add('bloqueado'); secElite.classList.add('bloqueado'); secStats.classList.add('bloqueado');
+                document.getElementById('card-gratis').classList.add('plan-activo'); document.querySelector('#card-gratis .btn-outline').innerText = 'Plan Actual'; document.querySelector('#card-gratis .btn-outline').style.pointerEvents = 'none';
+            }
         }
-        function dibujarGraficoComparativa(miNombre) {
-            const ctxComp = document.getElementById('comparativaChart').getContext('2d');
-            let todosCompetidores = ['Motojasvy', 'Motos Eduard', 'Alta Gama', 'Caminic Motors', 'Tecnimotos El Paisa']; let todasVistas = [1450, 980, 650, 420, 210];
-            let etiquetasFiltradas = []; let datosFiltrados = [];
-            for (let i = 0; i < todosCompetidores.length; i++) { if (todosCompetidores[i].toLowerCase().split(' ')[0] !== miNombre.toLowerCase().split(' ')[0]) { etiquetasFiltradas.push(todosCompetidores[i]); datosFiltrados.push(todasVistas[i]); } }
-            etiquetasFiltradas = etiquetasFiltradas.slice(0, 4); datosFiltrados = datosFiltrados.slice(0, 4);
-            let etiquetasFinales = [miNombre, ...etiquetasFiltradas]; let datosFinales = [1245, ...datosFiltrados];
-            let colores = ['#e63946', '#ced4da', '#ced4da', '#ced4da', '#ced4da'];
-            new Chart(ctxComp, { type: 'bar', data: { labels: etiquetasFinales, datasets: [{ label: 'Visitas Mensuales', data: datosFinales, backgroundColor: colores, borderRadius: 6 }] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } } });
+
+        function activarPlanInmediato(nuevoPlan) {
+            reproducirSonidoExito(); planActual = nuevoPlan; sessionStorage.setItem('miTallerPlan', nuevoPlan);
+            document.querySelector('#card-elite .btn-primary').innerText = 'Adquirir ÉLITE'; document.querySelector('#card-elite .btn-primary').style.pointerEvents = 'auto';
+            document.querySelector('#card-pro .btn-primary').innerText = 'Adquirir PRO'; document.querySelector('#card-pro .btn-primary').style.pointerEvents = 'auto';
+            aplicarReglasDePlan(); alert('Has cambiado al plan Estándar (Gratis). Se han bloqueado las funciones premium.');
         }
-        function cargarDatosGuardados() { document.getElementById('edit-nombre').value = localStorage.getItem('miTallerNombre') || 'Tu Taller'; document.getElementById('nombre-taller-display').innerText = (localStorage.getItem('miTallerNombre') || 'Tu Taller').toUpperCase(); document.getElementById('edit-dir').value = localStorage.getItem('miTallerDir') || '📍 Tu Dirección'; if (sessionStorage.getItem('miTallerPlan') !== 'gratis') document.getElementById('edit-ws').value = localStorage.getItem('miTallerWS') || '3100000000'; actualizarPreview(); }
-        function abrirEditorPerfil() { reproducirSonidoUI(); cargarDatosGuardados(); document.getElementById('modal-editar-perfil').style.display = 'flex'; }
-        function cancelarEdicion() { document.getElementById('modal-editar-perfil').style.display = 'none'; }
-        function actualizarPreview() { document.getElementById('preview-nombre').innerText = document.getElementById('edit-nombre').value || 'Nombre Taller'; document.getElementById('preview-dir').innerText = document.getElementById('edit-dir').value || '📍 Dirección'; let estado = document.getElementById('edit-estado').value; let dot = document.getElementById('preview-dot'); let textoEstado = document.getElementById('preview-estado'); if (estado === 'abierto') { dot.style.backgroundColor = '#28a745'; textoEstado.innerText = 'Abierto ahora'; } else if (estado === 'cerrado') { dot.style.backgroundColor = '#dc3545'; textoEstado.innerText = 'Cerrado'; } else { dot.style.backgroundColor = '#ffb703'; textoEstado.innerText = 'Abierto 24 Horas'; } }
-        function guardarCambiosPerfil(event) { reproducirSonidoUI(); let nombre = document.getElementById('edit-nombre').value; localStorage.setItem('miTallerNombre', nombre); localStorage.setItem('miTallerDir', document.getElementById('edit-dir').value); if (sessionStorage.getItem('miTallerPlan') !== 'gratis') localStorage.setItem('miTallerWS', document.getElementById('edit-ws').value); document.getElementById('nombre-taller-display').innerText = nombre.toUpperCase(); let btn = event.target; let txt = btn.innerText; btn.innerText = '✔️ Guardado...'; btn.style.background = '#28a745'; setTimeout(() => { location.reload(); }, 800); }
+
+        function guardarCambiosSimulados(btn) { reproducirSonidoExito(); let t = btn.innerText; btn.innerText = '✅ Guardado'; btn.style.background = '#28a745'; setTimeout(() => { btn.innerText = t; btn.style.background = ''; }, 2000); }
+
+        function inicializarBaseDatosChat() {
+            if(!localStorage.getItem('bd_mensajes')) {
+                let mockDB = [{ id: "chat_1", taller: "Motojasvy", cliente: "Juan Cardozo", mensajes: [{ remitente: "cliente", texto: "Hola, ¿tienen disponibilidad para revisar los frenos?", hora: "10:30 AM" }, { remitente: "taller", texto: "¡Hola Juan! Sí, claro. Puedes traer el vehículo a partir de las 8:00 AM.", hora: "10:45 AM" }] }];
+                localStorage.setItem('bd_mensajes', JSON.stringify(mockDB));
+            }
+        }
+
+        function renderizarListaChatsTaller() {
+            let db = JSON.parse(localStorage.getItem('bd_mensajes')) || [];
+            let misChats = db.filter(c => c.taller === nombreTallerGlobal);
+            let listaHTML = document.getElementById('lista-chats-taller');
+            if(misChats.length === 0) { listaHTML.innerHTML = `<p style="padding:10px; color:var(--text-muted); font-size:13px; text-align:center;">No tienes mensajes.</p>`; return; }
+            let html = '';
+            misChats.forEach(chat => {
+                let ultimoMsg = chat.mensajes.length > 0 ? chat.mensajes[chat.mensajes.length-1].texto : "Nuevo chat";
+                let activoClass = chatActivoId === chat.id ? 'active' : '';
+                html += `<div class="chat-item ${activoClass}" onclick="abrirChatTaller('${chat.id}')"><h4>👤 ${chat.cliente}</h4><p>${ultimoMsg}</p></div>`;
+            });
+            listaHTML.innerHTML = html;
+        }
+
+        function abrirChatTaller(idChat) {
+            reproducirSonidoUI(); chatActivoId = idChat; renderizarListaChatsTaller(); 
+            let db = JSON.parse(localStorage.getItem('bd_mensajes')) || []; let chat = db.find(c => c.id === idChat);
+            document.getElementById('ventana-chat-taller').style.display = 'flex'; document.getElementById('chat-header-taller').innerText = "👤 " + chat.cliente;
+            let htmlBurbujas = '';
+            chat.mensajes.forEach(m => { let clase = m.remitente === 'taller' ? 'msg-taller' : 'msg-cliente'; htmlBurbujas += `<div class="mensaje ${clase}">${m.texto}<div style="font-size:9px; text-align:right; margin-top:3px; opacity:0.7;">${m.hora}</div></div>`; });
+            let caja = document.getElementById('chat-messages-taller'); caja.innerHTML = htmlBurbujas; caja.scrollTop = caja.scrollHeight; 
+        }
+
+        function enviarMensajeTaller() {
+            let input = document.getElementById('input-msg-taller'); let texto = input.value.trim(); if(!texto || !chatActivoId) return;
+            reproducirSonidoExito(); let db = JSON.parse(localStorage.getItem('bd_mensajes')) || []; let index = db.findIndex(c => c.id === chatActivoId);
+            let ahora = new Date(); let hora = ahora.getHours() + ':' + (ahora.getMinutes()<10?'0':'') + ahora.getMinutes();
+            db[index].mensajes.push({ remitente: "taller", texto: texto, hora: hora });
+            localStorage.setItem('bd_mensajes', JSON.stringify(db)); input.value = ''; abrirChatTaller(chatActivoId); 
+        }
     </script>
 </body>
 </html>

@@ -1,11 +1,10 @@
 let modoLoginActual = 'cliente';
 
-// BASE DE DATOS CENTRALIZADA
 const baseDatosTalleres = {
     'motojasvy': {
         id: 'motojasvy', nombre: 'Motojasvy', plan: 'elite', lat: '4.677010', lng: '-74.149393',
         tags: 'abierto motos mecanica repuestos aceite frenos llantas escaner baterias domingos festivos tarjetas espera wifi',
-        img: 'img/motojasvy.jpeg', badge: '★ TOP #1 (ÉLITE)', badgeClass: 'badge-elite',
+        img: 'img/motojasvy.jpeg', badge: '👑 TOP #1 (ÉLITE)', badgeClass: 'badge-elite',
         estrellas: '⭐⭐⭐⭐⭐ <span style="color:#fff; font-size:16px;">(4.9)</span>', dir: '📍 Calle 17 #106-53, Fontibón', ws: '573108738051',
         puntaje: '4.9', totalResenas: 184, desc: 'Taller líder en Fontibón. Especialistas en motocicletas con mecánica general y repuestos originales Bajaj, Yamaha, Suzuki. Contamos con escáner.',
         horarios: { lv: '08:00 AM - 07:00 PM', s: '08:00 AM - 05:00 PM', d: '08:00 AM - 05:00 PM' },
@@ -18,7 +17,7 @@ const baseDatosTalleres = {
     'motos-eduar': {
         id: 'motos-eduar', nombre: 'Motos Eduard La 17', plan: 'pro', lat: '4.675749', lng: '-74.148311',
         tags: 'abierto motos mecanica aceite frenos llantas domingos festivos tarjetas espera wifi',
-        img: 'img/motos eduard.jpeg', badge: '★ DESTACADO (PRO)', badgeClass: 'badge-profesional',
+        img: 'img/motos eduard.jpeg', badge: '⭐ DESTACADO (PRO)', badgeClass: 'badge-profesional',
         estrellas: '⭐⭐⭐⭐ <span style="color:#fff; font-size:16px;">(4.6)</span>', dir: '📍 Calle 17 #104b-25, Fontibón', ws: '573132490363',
         puntaje: '4.6', totalResenas: 95, desc: 'Mecánica y mantenimiento de motos multimarca. Servicio a domicilio y sincronización.',
         horarios: { lv: '08:00 AM - 08:00 PM', s: '08:00 AM - 08:00 PM', d: '11:30 AM - 05:00 PM' },
@@ -30,7 +29,7 @@ const baseDatosTalleres = {
     'alta-gama': {
         id: 'alta-gama', nombre: 'Alta Gama Arteda', plan: 'pro', lat: '4.678395', lng: '-74.150302',
         tags: 'abierto livianos mecanica latoneria festivos tarjetas espera wifi',
-        img: 'img/alta gama arteda.jpeg', badge: '★ DESTACADO (PRO)', badgeClass: 'badge-profesional',
+        img: 'img/alta gama arteda.jpeg', badge: '⭐ DESTACADO (PRO)', badgeClass: 'badge-profesional',
         estrellas: '⭐⭐⭐⭐ <span style="color:#fff; font-size:16px;">(4.2)</span>', dir: '📍 Calle 17 #108-34, Fontibón', ws: '573108033336',
         puntaje: '4.2', totalResenas: 34, desc: 'Especialistas en vehículos livianos. Mecánica general, fibra de vidrio, latonería y pintura.',
         horarios: { lv: '08:00 AM - 06:00 PM', s: '08:00 AM - 04:00 PM', d: '08:00 AM - 02:00 PM' },
@@ -111,13 +110,13 @@ function renderizarTarjetas() {
         let tallerEncontrado = talleresArray.find(t => t.nombre.toLowerCase().includes(miNombre.toLowerCase().split(' ')[0]));
         if (tallerEncontrado) {
             tallerEncontrado.plan = miPlan; tallerEncontrado.nombre = miNombre;
-            if (miPlan === 'elite') { tallerEncontrado.badge = '★ TOP #1 (ÉLITE)'; tallerEncontrado.badgeClass = 'badge-elite'; } 
-            else if (miPlan === 'pro') { tallerEncontrado.badge = '★ DESTACADO (PRO)'; tallerEncontrado.badgeClass = 'badge-profesional'; } 
+            if (miPlan === 'elite') { tallerEncontrado.badge = '👑 TOP #1 (ÉLITE)'; tallerEncontrado.badgeClass = 'badge-elite'; } 
+            else if (miPlan === 'pro') { tallerEncontrado.badge = '⭐ DESTACADO (PRO)'; tallerEncontrado.badgeClass = 'badge-profesional'; } 
             else { tallerEncontrado.badge = ''; tallerEncontrado.badgeClass = ''; }
         }
     }
 
-    let htmlTarjetas = `<div id="mensaje-sin-resultados" style="display: none; text-align: center; padding: 50px 20px; background: var(--bg-card); border-radius: 12px; border: 1px dashed var(--border-color); margin-bottom: 20px;"><span style="font-size: 40px;" aria-hidden="true">🔍</span><h3 style="color: var(--text-main); margin-top: 15px;">No encontramos talleres</h3><button class="btn-outline" style="margin-top: 15px;" onclick="mostrarTodos()">Limpiar Búsqueda</button></div>`;
+    let htmlTarjetas = `<div id="mensaje-sin-resultados" style="display: none; text-align: center; padding: 50px 20px; background: var(--bg-card); border-radius: 12px; border: 1px dashed var(--border-color); margin-bottom: 20px; grid-column: 1 / -1;"><span style="font-size: 40px;" aria-hidden="true">🔍</span><h3 style="color: var(--text-main); margin-top: 15px;">No encontramos talleres</h3><button class="btn-outline" style="margin-top: 15px;" onclick="mostrarTodos()">Limpiar Búsqueda</button></div>`;
 
     talleresArray.sort((a, b) => { const v = { 'elite': 1, 'pro': 2, 'gratis': 3 }; return v[a.plan] - v[b.plan]; });
 
@@ -190,7 +189,6 @@ function cargarFavoritos() {
     document.querySelectorAll('.btn-guardar').forEach(btn => { let id = btn.getAttribute('data-id'); if(favoritos.includes(id)) btn.innerText = '❤️'; });
 }
 
-// RESTAURADA: Abre la ruta en una nueva pestaña (Google Maps 100% nativo)
 function seleccionarTaller(lat, lng, esPremium, elementoTarjeta) {
     reproducirSonidoUI();
     let tarjetas = document.querySelectorAll('.card'); tarjetas.forEach(t => t.classList.remove('active'));
@@ -199,12 +197,14 @@ function seleccionarTaller(lat, lng, esPremium, elementoTarjeta) {
     let mapaIframe = document.getElementById('mapa-google'); 
     let btnComoLlegar = document.getElementById('btn-como-llegar'); 
     let aviso = document.getElementById('aviso-mapa-restringido');
+    let placeholder = document.getElementById('map-placeholder');
+    
+    if (placeholder) placeholder.style.display = 'none';
     
     if (esPremium && lat && lng) { 
         if (mapaIframe) mapaIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=es&z=17&output=embed`; 
         if (btnComoLlegar) { 
             btnComoLlegar.style.display = 'flex'; 
-            // Reasignamos el enlace directo a Google Maps
             btnComoLlegar.href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
         }
         if (aviso) aviso.style.display = 'none'; 
@@ -251,11 +251,23 @@ function procesarRegistro(tipo) {
     cerrarSplashVisible(); actualizarCabecera(); renderizarTarjetas();
 }
 function cerrarSplashVisible() { const splash = document.getElementById('splash-screen'); if (splash) { splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; }, 600); } }
+
+// INYECCIÓN DEL BOTÓN DE SALIR ELEGÁNTE
 function actualizarCabecera() {
     let contenedorBotones = document.getElementById('user-actions-container'); if(!contenedorBotones) return;
-    let rolLogueado = sessionStorage.getItem('rolUsuario'); let btnDark = `<button class="btn-darkmode" onclick="toggleDarkMode()" aria-label="Cambiar modo oscuro">🌓</button>`;
-    if (rolLogueado === 'taller') { contenedorBotones.innerHTML = btnDark + `<a href="panel-taller.html" class="btn-outline" style="border-color: #ffb703; color: #b78200; margin-right: 15px;">⚙️ Mi Panel</a><a href="#" class="btn-login" style="background: #dc3545;" onclick="cerrarSesion()">Salir</a>`; } 
-    else if (rolLogueado === 'cliente') { contenedorBotones.innerHTML = btnDark + `<a href="panel-usuario.html" class="btn-outline" style="border-color: #e63946; color: #e63946; margin-right: 15px;">👤 Mi Perfil</a><a href="#" class="btn-login" style="background: #dc3545;" onclick="cerrarSesion()">Salir</a>`; } 
-    else { contenedorBotones.innerHTML = btnDark + `<a href="#" class="btn-login" onclick="cerrarSesion()">Ingresar / Registro</a>`; }
+    let rolLogueado = sessionStorage.getItem('rolUsuario'); 
+    let btnDark = `<button class="btn-darkmode" onclick="toggleDarkMode()" aria-label="Cambiar modo oscuro">🌓</button>`;
+    let btnSalirElegante = `<a href="#" class="btn-exit-elegant" onclick="cerrarSesion()">🚪 Salir</a>`;
+
+    if (rolLogueado === 'taller') { 
+        contenedorBotones.innerHTML = btnDark + `<a href="panel-taller.html" class="btn-outline" style="border-color: #ffb703; color: #b78200; margin-right: 15px;">⚙️ Mi Panel</a>` + btnSalirElegante; 
+    } 
+    else if (rolLogueado === 'cliente') { 
+        contenedorBotones.innerHTML = btnDark + `<a href="panel-usuario.html" class="btn-outline" style="border-color: #e63946; color: #e63946; margin-right: 15px;">👤 Mi Perfil</a>` + btnSalirElegante; 
+    } 
+    else { 
+        contenedorBotones.innerHTML = btnDark + `<a href="#" class="btn-login" onclick="cerrarSesion()">Ingresar / Registro</a>`; 
+    }
 }
+
 function cerrarSesion() { reproducirSonidoUI(); sessionStorage.removeItem('splashVisto'); sessionStorage.removeItem('rolUsuario'); sessionStorage.removeItem('miTallerPlan'); window.location.href = 'index.html'; }
