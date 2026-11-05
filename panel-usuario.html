@@ -25,7 +25,6 @@
         .favoritos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
         .empty-state { text-align: center; padding: 40px 20px; background: var(--bg-main); border-radius: 8px; border: 2px dashed var(--border-color); color: var(--text-muted); }
 
-        /* SISTEMA DE CHAT INTERNO */
         .chat-container-layout { display: flex; gap: 20px; flex-wrap: wrap; }
         .chat-list { flex: 1; min-width: 250px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-main); height: 450px; overflow-y: auto; padding: 10px; }
         .chat-item { padding: 12px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; margin-bottom: 5px; transition: 0.2s; background: var(--bg-card); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
@@ -70,7 +69,6 @@
         <main class="panel-content">
             <h2 id="titulo-seccion" style="margin-top: 0;">Datos del Vehículo y Perfil</h2>
 
-            <!-- PESTAÑA 1: PERFIL -->
             <div id="tab-perfil" class="tab-seccion active">
                 <div class="seccion-form">
                     <h3>1. Información Personal</h3>
@@ -91,13 +89,11 @@
                 </div>
             </div>
 
-            <!-- PESTAÑA 2: FAVORITOS -->
             <div id="tab-favoritos" class="tab-seccion">
                 <p style="color: var(--text-muted); margin-bottom: 20px;">Aquí tienes acceso rápido a los talleres que marcaste con un corazón (❤️) en el directorio.</p>
                 <div id="contenedor-mis-favoritos" class="favoritos-grid"></div>
             </div>
 
-            <!-- PESTAÑA 3: MENSAJES -->
             <div id="tab-mensajes" class="tab-seccion">
                 <p style="color: var(--text-muted); margin-top: -10px; margin-bottom: 20px;">Comunícate directamente con los talleres de Fontibón sin salir de la plataforma.</p>
                 <div class="chat-container-layout">
@@ -113,11 +109,8 @@
                 </div>
             </div>
 
-            <!-- PESTAÑA 4: CITAS CON MAPA -->
             <div id="tab-citas" class="tab-seccion">
                 <div style="display: flex; gap: 30px; flex-wrap: wrap;">
-                    
-                    <!-- Columna de Lista de Citas -->
                     <div style="flex: 1; min-width: 300px;">
                         <h3 style="margin-top: 0;">Próximas Citas</h3>
                         <div class="cita-box">
@@ -131,15 +124,12 @@
                         </div>
                     </div>
 
-                    <!-- Columna del Mapa de Citas -->
                     <div style="flex: 1; min-width: 300px;">
                         <h3 style="margin-top: 0;">📍 Ubicación de tus Citas</h3>
                         <div style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); height: 350px; box-shadow: 0 4px 10px var(--shadow-color);">
-                            <!-- Mapa centrado en la cita actual -->
                             <iframe src="https://maps.google.com/maps?q=Calle+17+Fontibon,Bogota&hl=es&z=15&output=embed" width="100%" height="100%" style="border:0;"></iframe>
                         </div>
                     </div>
-
                 </div>
             </div>
 

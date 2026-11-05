@@ -3,7 +3,7 @@ let modoLoginActual = 'cliente';
 const baseDatosTalleres = {
     'motojasvy': {
         id: 'motojasvy', nombre: 'Motojasvy', plan: 'elite', lat: '4.677010', lng: '-74.149393',
-        tags: 'abierto motos mecanica repuestos aceite frenos llantas escaner baterias domingos festivos tarjetas espera wifi',
+        tags: 'motos mecanica repuestos aceite frenos llantas escaner baterias domingos festivos tarjetas espera wifi',
         img: 'img/motojasvy.jpeg', badge: '👑 TOP #1 (ÉLITE)', badgeClass: 'badge-elite',
         estrellas: '⭐⭐⭐⭐⭐ <span style="color:#fff; font-size:16px;">(4.9)</span>', dir: '📍 Calle 17 #106-53, Fontibón', ws: '573108738051',
         puntaje: '4.9', totalResenas: 184, desc: 'Taller líder en Fontibón. Especialistas en motocicletas con mecánica general y repuestos originales Bajaj, Yamaha, Suzuki. Contamos con escáner.',
@@ -16,7 +16,7 @@ const baseDatosTalleres = {
     },
     'motos-eduar': {
         id: 'motos-eduar', nombre: 'Motos Eduard La 17', plan: 'pro', lat: '4.675749', lng: '-74.148311',
-        tags: 'abierto motos mecanica aceite frenos llantas domingos festivos tarjetas espera wifi',
+        tags: 'motos mecanica aceite frenos llantas domingos festivos tarjetas espera wifi',
         img: 'img/motos eduard.jpeg', badge: '⭐ DESTACADO (PRO)', badgeClass: 'badge-profesional',
         estrellas: '⭐⭐⭐⭐ <span style="color:#fff; font-size:16px;">(4.6)</span>', dir: '📍 Calle 17 #104b-25, Fontibón', ws: '573132490363',
         puntaje: '4.6', totalResenas: 95, desc: 'Mecánica y mantenimiento de motos multimarca. Servicio a domicilio y sincronización.',
@@ -28,7 +28,7 @@ const baseDatosTalleres = {
     },
     'alta-gama': {
         id: 'alta-gama', nombre: 'Alta Gama Arteda', plan: 'pro', lat: '4.678395', lng: '-74.150302',
-        tags: 'abierto livianos mecanica latoneria festivos tarjetas espera wifi',
+        tags: 'livianos mecanica latoneria festivos tarjetas espera wifi',
         img: 'img/alta gama arteda.jpeg', badge: '⭐ DESTACADO (PRO)', badgeClass: 'badge-profesional',
         estrellas: '⭐⭐⭐⭐ <span style="color:#fff; font-size:16px;">(4.2)</span>', dir: '📍 Calle 17 #108-34, Fontibón', ws: '573108033336',
         puntaje: '4.2', totalResenas: 34, desc: 'Especialistas en vehículos livianos. Mecánica general, fibra de vidrio, latonería y pintura.',
@@ -40,7 +40,7 @@ const baseDatosTalleres = {
     },
     'caminic-motors': {
         id: 'caminic-motors', nombre: 'Caminic Motors', plan: 'gratis', lat: '4.675688', lng: '-74.148248',
-        tags: 'abierto livianos pesados electricos mecanica latoneria electricidad aceite frenos escaner domingos festivos tarjetas',
+        tags: 'livianos pesados electricos mecanica latoneria electricidad aceite frenos escaner domingos festivos tarjetas',
         img: 'img/caminic motors.jpeg', badge: '', badgeClass: '',
         estrellas: '⭐⭐⭐ <span style="color:#fff; font-size:16px;">(3.8)</span>', dir: '📍 Calle 17 #104b-21, Fontibón', ws: '',
         puntaje: '3.8', totalResenas: 42, desc: 'Taller multimarca livianos, pesados. Especialistas en embragues e inyectores.',
@@ -52,7 +52,7 @@ const baseDatosTalleres = {
     },
     'tecnimotos-paisa': {
         id: 'tecnimotos-paisa', nombre: 'Tecnimotos El Paisa', plan: 'gratis', lat: '4.675496', lng: '-74.148050',
-        tags: 'abierto motos mecanica aceite frenos tarjetas',
+        tags: 'motos mecanica aceite frenos tarjetas',
         img: 'img/tecnimotos el paisa.jpeg', badge: '', badgeClass: '',
         estrellas: '⭐⭐⭐ <span style="color:#fff; font-size:16px;">(3.5)</span>', dir: '📍 Calle 17 #103b-31, Fontibón', ws: '',
         puntaje: '4.1', totalResenas: 19, desc: 'Servicio técnico de motos. Repsol, Yamaha, Kawasaki, Honda, Auteco.',
@@ -61,8 +61,61 @@ const baseDatosTalleres = {
         resenas: [
             { autor: 'Sebastian Ortiz', inicial: 'S', color: '#28a745', fecha: 'hace 2 semanas', texto: 'El Paisa sabe lo que hace, entregó la moto súper rápido.', estrellas: '⭐⭐⭐⭐⭐' }
         ]
+    },
+    'frenos-embrague': {
+        id: 'frenos-embrague', nombre: 'Taller Freno Embrague', plan: 'gratis', lat: '4.675688', lng: '-74.148248',
+        tags: 'livianos mecanica frenos escaner domingos',
+        img: 'img/frenos y embrague.jpg', badge: '', badgeClass: '',
+        estrellas: '⭐⭐⭐ <span style="color:#fff; font-size:16px;">(3.6)</span>', dir: '📍 Calle 17 #104b-21', ws: '573134778972',
+        puntaje: '3.6', totalResenas: 5, desc: 'Especialistas en frenos, embragues, sincronización, full inyección y diésel. Contamos con escáner.',
+        horarios: { lv: '07:30 AM - 06:00 PM', s: '07:30 AM - 06:00 PM', d: '07:30 AM - 12:00 PM' },
+        tagsArray: ['Mecánica General', 'Frenos y Suspensión', 'Escáner'],
+        resenas: [
+            { autor: 'Cliente Frecuente', inicial: 'C', color: '#4361ee', fecha: 'hace 2 meses', texto: 'Fui por una sincronización y el carro quedó muy bien. Trabajan con buenas herramientas.', estrellas: '⭐⭐⭐⭐⭐' },
+            { autor: 'Andrés M.', inicial: 'A', color: '#e63946', fecha: 'hace 4 meses', texto: 'Buen servicio de mecánica en general, pero podrían mejorar un poco en los tiempos de entrega.', estrellas: '⭐⭐⭐⭐' },
+            { autor: 'Usuario Local', inicial: 'U', color: '#6c757d', fecha: 'hace 6 meses', texto: 'Me pareció un poco costoso y no fui atendido de inmediato.', estrellas: '⭐⭐' }
+        ]
     }
 };
+
+// ==========================================
+// FUNCIÓN DINÁMICA DE HORARIOS EN TIEMPO REAL
+// ==========================================
+function estaAbiertoAhora(horarios) {
+    let ahora = new Date();
+    let dia = ahora.getDay(); // 0 = Domingo, 1-5 = L-V, 6 = Sábado
+    let horarioHoy = (dia === 0) ? horarios.d : (dia === 6) ? horarios.s : horarios.lv;
+
+    if (!horarioHoy || horarioHoy.toLowerCase().includes('cerrado')) return false;
+
+    try {
+        let partes = horarioHoy.split('-');
+        if(partes.length !== 2) return true; // Fallback de seguridad
+
+        let parseHora = (horaStr) => {
+            horaStr = horaStr.trim();
+            let [time, modifier] = horaStr.split(' ');
+            let [hours, minutes] = time.split(':');
+            hours = parseInt(hours, 10);
+            minutes = parseInt(minutes, 10);
+            
+            if (hours === 12 && modifier.toUpperCase() === 'AM') hours = 0;
+            if (hours < 12 && modifier.toUpperCase() === 'PM') hours += 12;
+            
+            let d = new Date();
+            d.setHours(hours, minutes, 0, 0);
+            return d;
+        };
+
+        let apertura = parseHora(partes[0]);
+        let cierre = parseHora(partes[1]);
+        
+        return (ahora >= apertura && ahora <= cierre);
+    } catch(e) {
+        return true; 
+    }
+}
+// ==========================================
 
 function reproducirSonidoUI() {
     try {
@@ -122,15 +175,26 @@ function renderizarTarjetas() {
 
     talleresArray.forEach(t => {
         if (soloDestacados && t.plan === 'gratis') return;
+        
         let esPremium = (t.plan === 'elite' || t.plan === 'pro');
         let cardClass = esPremium ? (t.plan === 'elite' ? 'card premium-elite' : 'card premium-profesional') : 'card';
         let badgeHTML = t.badge ? `<div class="${t.badgeClass}">${t.badge}</div>` : '';
+        
+        // --- EVALUACIÓN DE HORARIO EN TIEMPO REAL ---
+        let estaAbierto = estaAbiertoAhora(t.horarios);
+        let statusText = estaAbierto ? 'Abierto ahora' : 'Cerrado ahora';
+        let statusColor = estaAbierto ? '#28a745' : '#dc3545';
+        
+        // Inyectar el tag "abierto" dinámicamente si el cálculo da true
+        let tagsDinamic = t.tags.replace('abierto', '').trim(); 
+        if(estaAbierto) tagsDinamic += ' abierto';
+
         let actionsHTML = t.plan === 'gratis' 
             ? `<a href="perfil.html?id=${t.id}" class="btn-primary" style="background:#666;" aria-label="Ver info básica de ${t.nombre}">Info Básica</a><span style="font-size: 11px; color: #d9534f; background: #fdf7f7; padding: 5px; border-radius: 6px; border: 1px solid #ebccd1;">🔒 WhatsApp</span>`
             : `<a href="perfil.html?id=${t.id}" class="btn-primary" aria-label="Ver perfil completo de ${t.nombre}">${t.plan === 'elite' ? '⭐ Perfil Completo' : '🖼️ Ver Perfil'}</a><button class="btn-whatsapp" onclick="contactarWhatsApp('${t.ws}', '${t.nombre}', event)" aria-label="Contactar por WhatsApp">📱 WhatsApp</button>`;
 
         htmlTarjetas += `
-            <article class="${cardClass}" data-tags="${t.tags}" onclick="seleccionarTaller('${t.lat}', '${t.lng}', ${esPremium}, this)" tabindex="0" role="button">
+            <article class="${cardClass}" data-tags="${tagsDinamic}" onclick="seleccionarTaller('${t.lat}', '${t.lng}', ${esPremium}, this)" tabindex="0" role="button">
                 <div class="card-img" style="height: 160px; background-image: url('${t.img}'); background-size: cover; background-position: center; color: transparent;" aria-hidden="true">${t.nombre}</div>
                 <div class="card-body">
                     <div style="display: flex; justify-content: space-between; width: 100%;">
@@ -139,7 +203,12 @@ function renderizarTarjetas() {
                     </div>
                     ${t.badge ? `<h2 class="card-title">${t.nombre}</h2>` : ''}
                     <div class="stars">${t.estrellas}</div>
-                    <div class="status-container"><span class="status-dot"></span> Abierto ahora</div>
+                    
+                    <!-- ETIQUETA DE HORARIO DINÁMICA -->
+                    <div class="status-container" style="color: ${statusColor};">
+                        <span class="status-dot" style="background: ${statusColor}; margin-right: 5px;"></span> ${statusText}
+                    </div>
+                    
                     <div class="card-location">${t.dir}</div>
                     <div class="actions">${actionsHTML}</div>
                 </div>
@@ -235,7 +304,7 @@ function procesarLogin() {
     reproducirSonidoExito(); let email = document.getElementById('splash-email').value.toLowerCase();
     let plan = 'elite'; let nombre = 'Motojasvy';
     if (email.includes('autopunto') || email.includes('eduar')) { plan = 'pro'; nombre = 'Motos Eduard La 17'; } 
-    else if (email.includes('rodamientos') || email.includes('caminic')) { plan = 'gratis'; nombre = 'Caminic Motors'; }
+    else if (email.includes('rodamientos') || email.includes('caminic') || email.includes('frenos')) { plan = 'gratis'; nombre = 'Taller Freno Embrague'; }
     sessionStorage.setItem('splashVisto', 'true'); sessionStorage.setItem('rolUsuario', modoLoginActual); 
     if (modoLoginActual === 'taller') { sessionStorage.setItem('miTallerPlan', plan); localStorage.setItem('miTallerNombre', nombre); }
     cerrarSplashVisible(); actualizarCabecera(); renderizarTarjetas();
@@ -252,7 +321,6 @@ function procesarRegistro(tipo) {
 }
 function cerrarSplashVisible() { const splash = document.getElementById('splash-screen'); if (splash) { splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; }, 600); } }
 
-// INYECCIÓN DEL BOTÓN DE SALIR ELEGÁNTE
 function actualizarCabecera() {
     let contenedorBotones = document.getElementById('user-actions-container'); if(!contenedorBotones) return;
     let rolLogueado = sessionStorage.getItem('rolUsuario'); 
