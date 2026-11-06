@@ -24,7 +24,7 @@
         .estado-completada { background: #e2e3e5; color: #383d41; }
         .favoritos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
         .empty-state { text-align: center; padding: 40px 20px; background: var(--bg-main); border-radius: 8px; border: 2px dashed var(--border-color); color: var(--text-muted); }
-
+        
         .chat-container-layout { display: flex; gap: 20px; flex-wrap: wrap; }
         .chat-list { flex: 1; min-width: 250px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-main); height: 450px; overflow-y: auto; padding: 10px; }
         .chat-item { padding: 12px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; margin-bottom: 5px; transition: 0.2s; background: var(--bg-card); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
@@ -80,7 +80,6 @@
 
                 <div class="seccion-form">
                     <h3>2. Datos de mi Vehículo</h3>
-                    <p style="font-size: 12px; color: var(--text-muted); margin-top: -10px;">Esta información facilita tus cotizaciones en el chat.</p>
                     <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                         <div style="flex: 2; min-width: 150px;"><label class="label-form">Marca y Modelo</label><input type="text" class="input-form" id="input-marca" placeholder="Ej. Chevrolet Spark GT"></div>
                         <div style="flex: 1; min-width: 100px;"><label class="label-form">Placa</label><input type="text" class="input-form" id="input-placa" placeholder="XYZ-123"></div>
@@ -90,12 +89,10 @@
             </div>
 
             <div id="tab-favoritos" class="tab-seccion">
-                <p style="color: var(--text-muted); margin-bottom: 20px;">Aquí tienes acceso rápido a los talleres que marcaste con un corazón (❤️) en el directorio.</p>
                 <div id="contenedor-mis-favoritos" class="favoritos-grid"></div>
             </div>
 
             <div id="tab-mensajes" class="tab-seccion">
-                <p style="color: var(--text-muted); margin-top: -10px; margin-bottom: 20px;">Comunícate directamente con los talleres de Fontibón sin salir de la plataforma.</p>
                 <div class="chat-container-layout">
                     <div class="chat-list" id="lista-chats-cliente"></div>
                     <div class="chat-box" id="ventana-chat-cliente">
@@ -117,13 +114,7 @@
                             <div><strong style="color: var(--text-main); font-size: 16px;">🔧 Motojasvy (Revisión)</strong><div style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">📅 Mañana, 10:00 AM</div></div>
                             <div><span class="badge-estado estado-confirmada">Confirmada</span></div>
                         </div>
-                        <h3 style="margin-top: 30px;">Historial de Servicios</h3>
-                        <div class="cita-box pasada">
-                            <div><strong style="color: var(--text-main); font-size: 16px;">🚗 Alta Gama Arteda</strong><div style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">📅 15 Octubre 2026</div></div>
-                            <div><span class="badge-estado estado-completada">Completada</span></div>
-                        </div>
                     </div>
-
                     <div style="flex: 1; min-width: 300px;">
                         <h3 style="margin-top: 0;">📍 Ubicación de tus Citas</h3>
                         <div style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); height: 350px; box-shadow: 0 4px 10px var(--shadow-color);">
@@ -132,7 +123,6 @@
                     </div>
                 </div>
             </div>
-
         </main>
     </div>
 
@@ -174,13 +164,17 @@
             let contenedor = document.getElementById('contenedor-mis-favoritos');
             let favoritosIDs = JSON.parse(localStorage.getItem('misFavoritos')) || [];
             if (favoritosIDs.length === 0) {
-                contenedor.innerHTML = `<div class="empty-state"><span style="font-size: 40px;">💔</span><h3>Aún no tienes talleres favoritos</h3><p>Explora el directorio y haz clic en el corazón (🤍) de un taller para guardarlo.</p><a href="index.html" class="btn-primary" style="display:inline-block; margin-top:15px;">Explorar Talleres</a></div>`;
+                contenedor.innerHTML = `<div class="empty-state"><span style="font-size: 40px;">💔</span><h3>Aún no tienes talleres favoritos</h3><a href="index.html" class="btn-primary" style="display:inline-block; margin-top:15px;">Explorar Talleres</a></div>`;
                 contenedor.style.display = 'block'; return;
             }
             contenedor.style.display = 'grid';
             let html = '';
+            
+            // EL USUARIO AHORA LEE DE LA BASE DE DATOS GLOBAL
+            let dbGlobal = obtenerTalleres();
+            
             favoritosIDs.forEach(id => {
-                let t = baseDatosTalleres[id];
+                let t = dbGlobal[id];
                 if (t) {
                     html += `
                         <div style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--bg-card); position: relative;">
@@ -201,71 +195,17 @@
             contenedor.innerHTML = html;
         }
 
-        function eliminarFavDesdePanel(id) {
-            reproducirSonidoUI();
-            let favoritos = JSON.parse(localStorage.getItem('misFavoritos')) || [];
-            favoritos = favoritos.filter(favId => favId !== id);
-            localStorage.setItem('misFavoritos', JSON.stringify(favoritos));
-            renderizarFavoritosUsuario();
-        }
+        function eliminarFavDesdePanel(id) { reproducirSonidoUI(); let favoritos = JSON.parse(localStorage.getItem('misFavoritos')) || []; favoritos = favoritos.filter(favId => favId !== id); localStorage.setItem('misFavoritos', JSON.stringify(favoritos)); renderizarFavoritosUsuario(); }
 
-        function inicializarBaseDatosChat() {
-            if(!localStorage.getItem('bd_mensajes')) {
-                let mockDB = [{ id: "chat_1", taller: "Motojasvy", cliente: "Juan Cardozo", mensajes: [{ remitente: "cliente", texto: "Hola, ¿tienen disponibilidad para revisar los frenos?", hora: "10:30 AM" }, { remitente: "taller", texto: "¡Hola Juan! Sí, claro. Puedes traer el vehículo a partir de las 8:00 AM.", hora: "10:45 AM" }] }];
-                localStorage.setItem('bd_mensajes', JSON.stringify(mockDB));
-            }
-        }
+        function inicializarBaseDatosChat() { if(!localStorage.getItem('bd_mensajes')) { let mockDB = [{ id: "chat_1", taller: "Motojasvy", cliente: "Juan Cardozo", mensajes: [{ remitente: "cliente", texto: "Hola, ¿tienen disponibilidad para revisar los frenos?", hora: "10:30 AM" }, { remitente: "taller", texto: "¡Hola Juan! Sí, claro. Puedes traer el vehículo a partir de las 8:00 AM.", hora: "10:45 AM" }] }]; localStorage.setItem('bd_mensajes', JSON.stringify(mockDB)); } }
 
-        function iniciarChatInterno(nombreTallerDestino) {
-            reproducirSonidoExito();
-            let db = JSON.parse(localStorage.getItem('bd_mensajes')) || [];
-            let chatExistente = db.find(c => c.taller === nombreTallerDestino && c.cliente === nombreUsuarioActual);
-            if(!chatExistente) {
-                chatExistente = { id: "chat_" + Date.now(), taller: nombreTallerDestino, cliente: nombreUsuarioActual, mensajes: [] };
-                db.push(chatExistente); localStorage.setItem('bd_mensajes', JSON.stringify(db));
-            }
-            cambiarPestana('tab-mensajes', document.getElementById('btn-tab-mensajes'));
-            abrirChatCliente(chatExistente.id);
-        }
+        function iniciarChatInterno(nombreTallerDestino) { reproducirSonidoExito(); let db = JSON.parse(localStorage.getItem('bd_mensajes')) || []; let chatExistente = db.find(c => c.taller === nombreTallerDestino && c.cliente === nombreUsuarioActual); if(!chatExistente) { chatExistente = { id: "chat_" + Date.now(), taller: nombreTallerDestino, cliente: nombreUsuarioActual, mensajes: [] }; db.push(chatExistente); localStorage.setItem('bd_mensajes', JSON.stringify(db)); } cambiarPestana('tab-mensajes', document.getElementById('btn-tab-mensajes')); abrirChatCliente(chatExistente.id); }
 
-        function renderizarListaChatsCliente() {
-            let db = JSON.parse(localStorage.getItem('bd_mensajes')) || [];
-            let misChats = db.filter(c => c.cliente === nombreUsuarioActual);
-            let listaHTML = document.getElementById('lista-chats-cliente');
-            if(misChats.length === 0) { listaHTML.innerHTML = `<p style="padding:10px; color:var(--text-muted); font-size:13px; text-align:center;">No tienes conversaciones iniciadas.</p>`; return; }
-            let html = '';
-            misChats.forEach(chat => {
-                let ultimoMsg = chat.mensajes.length > 0 ? chat.mensajes[chat.mensajes.length-1].texto : "Haz clic para escribir...";
-                let activoClass = chatActivoId === chat.id ? 'active' : '';
-                html += `<div class="chat-item ${activoClass}" onclick="abrirChatCliente('${chat.id}')"><h4>🔧 ${chat.taller}</h4><p>${ultimoMsg}</p></div>`;
-            });
-            listaHTML.innerHTML = html;
-        }
+        function renderizarListaChatsCliente() { let db = JSON.parse(localStorage.getItem('bd_mensajes')) || []; let misChats = db.filter(c => c.cliente === nombreUsuarioActual); let listaHTML = document.getElementById('lista-chats-cliente'); if(misChats.length === 0) { listaHTML.innerHTML = `<p style="padding:10px; color:var(--text-muted); font-size:13px; text-align:center;">No tienes conversaciones iniciadas.</p>`; return; } let html = ''; misChats.forEach(chat => { let ultimoMsg = chat.mensajes.length > 0 ? chat.mensajes[chat.mensajes.length-1].texto : "Haz clic para escribir..."; let activoClass = chatActivoId === chat.id ? 'active' : ''; html += `<div class="chat-item ${activoClass}" onclick="abrirChatCliente('${chat.id}')"><h4>🔧 ${chat.taller}</h4><p>${ultimoMsg}</p></div>`; }); listaHTML.innerHTML = html; }
 
-        function abrirChatCliente(idChat) {
-            reproducirSonidoUI(); chatActivoId = idChat; renderizarListaChatsCliente(); 
-            let db = JSON.parse(localStorage.getItem('bd_mensajes')) || [];
-            let chat = db.find(c => c.id === idChat);
-            document.getElementById('ventana-chat-cliente').style.display = 'flex';
-            document.getElementById('chat-header-cliente').innerText = "🔧 " + chat.taller;
-            let htmlBurbujas = '';
-            chat.mensajes.forEach(m => {
-                let clase = m.remitente === 'cliente' ? 'msg-cliente' : 'msg-taller';
-                htmlBurbujas += `<div class="mensaje ${clase}">${m.texto}<div style="font-size:9px; text-align:right; margin-top:3px; opacity:0.7;">${m.hora}</div></div>`;
-            });
-            let caja = document.getElementById('chat-messages-cliente'); caja.innerHTML = htmlBurbujas; caja.scrollTop = caja.scrollHeight; 
-        }
+        function abrirChatCliente(idChat) { reproducirSonidoUI(); chatActivoId = idChat; renderizarListaChatsCliente(); let db = JSON.parse(localStorage.getItem('bd_mensajes')) || []; let chat = db.find(c => c.id === idChat); document.getElementById('ventana-chat-cliente').style.display = 'flex'; document.getElementById('chat-header-cliente').innerText = "🔧 " + chat.taller; let htmlBurbujas = ''; chat.mensajes.forEach(m => { let clase = m.remitente === 'cliente' ? 'msg-cliente' : 'msg-taller'; htmlBurbujas += `<div class="mensaje ${clase}">${m.texto}<div style="font-size:9px; text-align:right; margin-top:3px; opacity:0.7;">${m.hora}</div></div>`; }); let caja = document.getElementById('chat-messages-cliente'); caja.innerHTML = htmlBurbujas; caja.scrollTop = caja.scrollHeight; }
 
-        function enviarMensajeCliente() {
-            let input = document.getElementById('input-msg-cliente'); let texto = input.value.trim();
-            if(!texto || !chatActivoId) return;
-            reproducirSonidoExito();
-            let db = JSON.parse(localStorage.getItem('bd_mensajes')) || []; let index = db.findIndex(c => c.id === chatActivoId);
-            let ahora = new Date(); let hora = ahora.getHours() + ':' + (ahora.getMinutes()<10?'0':'') + ahora.getMinutes();
-            db[index].mensajes.push({ remitente: "cliente", texto: texto, hora: hora });
-            localStorage.setItem('bd_mensajes', JSON.stringify(db));
-            input.value = ''; abrirChatCliente(chatActivoId); 
-        }
+        function enviarMensajeCliente() { let input = document.getElementById('input-msg-cliente'); let texto = input.value.trim(); if(!texto || !chatActivoId) return; reproducirSonidoExito(); let db = JSON.parse(localStorage.getItem('bd_mensajes')) || []; let index = db.findIndex(c => c.id === chatActivoId); let ahora = new Date(); let hora = ahora.getHours() + ':' + (ahora.getMinutes()<10?'0':'') + ahora.getMinutes(); db[index].mensajes.push({ remitente: "cliente", texto: texto, hora: hora }); localStorage.setItem('bd_mensajes', JSON.stringify(db)); input.value = ''; abrirChatCliente(chatActivoId); }
     </script>
 </body>
 </html>

@@ -1,9 +1,10 @@
 let modoLoginActual = 'cliente';
 
-const baseDatosTalleres = {
+// BASE DE DATOS MAESTRA INICIAL
+const baseDatosTalleresInicial = {
     'motojasvy': {
         id: 'motojasvy', nombre: 'Motojasvy', plan: 'elite', lat: '4.677010', lng: '-74.149393',
-        tags: 'motos mecanica repuestos aceite frenos llantas escaner baterias domingos festivos tarjetas espera wifi',
+        tags: 'abierto motos mecanica repuestos aceite frenos llantas escaner baterias domingos festivos tarjetas espera wifi',
         img: 'img/motojasvy.jpeg', badge: '👑 TOP #1 (ÉLITE)', badgeClass: 'badge-elite',
         estrellas: '⭐⭐⭐⭐⭐ <span style="color:#fff; font-size:16px;">(4.9)</span>', dir: '📍 Calle 17 #106-53, Fontibón', ws: '573108738051',
         puntaje: '4.9', totalResenas: 184, desc: 'Taller líder en Fontibón. Especialistas en motocicletas con mecánica general y repuestos originales Bajaj, Yamaha, Suzuki. Contamos con escáner.',
@@ -16,7 +17,7 @@ const baseDatosTalleres = {
     },
     'motos-eduar': {
         id: 'motos-eduar', nombre: 'Motos Eduard La 17', plan: 'pro', lat: '4.675749', lng: '-74.148311',
-        tags: 'motos mecanica aceite frenos llantas domingos festivos tarjetas espera wifi',
+        tags: 'abierto motos mecanica aceite frenos llantas domingos festivos tarjetas espera wifi',
         img: 'img/motos eduard.jpeg', badge: '⭐ DESTACADO (PRO)', badgeClass: 'badge-profesional',
         estrellas: '⭐⭐⭐⭐ <span style="color:#fff; font-size:16px;">(4.6)</span>', dir: '📍 Calle 17 #104b-25, Fontibón', ws: '573132490363',
         puntaje: '4.6', totalResenas: 95, desc: 'Mecánica y mantenimiento de motos multimarca. Servicio a domicilio y sincronización.',
@@ -28,7 +29,7 @@ const baseDatosTalleres = {
     },
     'alta-gama': {
         id: 'alta-gama', nombre: 'Alta Gama Arteda', plan: 'pro', lat: '4.678395', lng: '-74.150302',
-        tags: 'livianos mecanica latoneria festivos tarjetas espera wifi',
+        tags: 'abierto livianos mecanica latoneria festivos tarjetas espera wifi',
         img: 'img/alta gama arteda.jpeg', badge: '⭐ DESTACADO (PRO)', badgeClass: 'badge-profesional',
         estrellas: '⭐⭐⭐⭐ <span style="color:#fff; font-size:16px;">(4.2)</span>', dir: '📍 Calle 17 #108-34, Fontibón', ws: '573108033336',
         puntaje: '4.2', totalResenas: 34, desc: 'Especialistas en vehículos livianos. Mecánica general, fibra de vidrio, latonería y pintura.',
@@ -40,7 +41,7 @@ const baseDatosTalleres = {
     },
     'caminic-motors': {
         id: 'caminic-motors', nombre: 'Caminic Motors', plan: 'gratis', lat: '4.675688', lng: '-74.148248',
-        tags: 'livianos pesados electricos mecanica latoneria electricidad aceite frenos escaner domingos festivos tarjetas',
+        tags: 'abierto livianos pesados electricos mecanica latoneria electricidad aceite frenos escaner domingos festivos tarjetas',
         img: 'img/caminic motors.jpeg', badge: '', badgeClass: '',
         estrellas: '⭐⭐⭐ <span style="color:#fff; font-size:16px;">(3.8)</span>', dir: '📍 Calle 17 #104b-21, Fontibón', ws: '',
         puntaje: '3.8', totalResenas: 42, desc: 'Taller multimarca livianos, pesados. Especialistas en embragues e inyectores.',
@@ -52,7 +53,7 @@ const baseDatosTalleres = {
     },
     'tecnimotos-paisa': {
         id: 'tecnimotos-paisa', nombre: 'Tecnimotos El Paisa', plan: 'gratis', lat: '4.675496', lng: '-74.148050',
-        tags: 'motos mecanica aceite frenos tarjetas',
+        tags: 'abierto motos mecanica aceite frenos tarjetas',
         img: 'img/tecnimotos el paisa.jpeg', badge: '', badgeClass: '',
         estrellas: '⭐⭐⭐ <span style="color:#fff; font-size:16px;">(3.5)</span>', dir: '📍 Calle 17 #103b-31, Fontibón', ws: '',
         puntaje: '4.1', totalResenas: 19, desc: 'Servicio técnico de motos. Repsol, Yamaha, Kawasaki, Honda, Auteco.',
@@ -64,7 +65,7 @@ const baseDatosTalleres = {
     },
     'frenos-embrague': {
         id: 'frenos-embrague', nombre: 'Taller Freno Embrague', plan: 'gratis', lat: '4.675688', lng: '-74.148248',
-        tags: 'livianos mecanica frenos escaner domingos',
+        tags: 'abierto livianos mecanica frenos escaner domingos',
         img: 'img/frenos y embrague.jpg', badge: '', badgeClass: '',
         estrellas: '⭐⭐⭐ <span style="color:#fff; font-size:16px;">(3.6)</span>', dir: '📍 Calle 17 #104b-21', ws: '573134778972',
         puntaje: '3.6', totalResenas: 5, desc: 'Especialistas en frenos, embragues, sincronización, full inyección y diésel. Contamos con escáner.',
@@ -79,63 +80,59 @@ const baseDatosTalleres = {
 };
 
 // ==========================================
+// MOTOR DE BASE DE DATOS GLOBAL (SINCRONIZACIÓN)
+// ==========================================
+function obtenerTalleres() {
+    if (!localStorage.getItem('bd_talleres_global')) {
+        localStorage.setItem('bd_talleres_global', JSON.stringify(baseDatosTalleresInicial));
+    }
+    return JSON.parse(localStorage.getItem('bd_talleres_global'));
+}
+
+function actualizarPlanGlobal(nombreTaller, nuevoPlan) {
+    let db = obtenerTalleres();
+    let nombreKey = nombreTaller.toLowerCase().split(' ')[0];
+    let idTaller = Object.keys(db).find(key => db[key].nombre.toLowerCase().includes(nombreKey));
+    
+    if (idTaller) {
+        db[idTaller].plan = nuevoPlan;
+        if(nuevoPlan === 'elite') {
+            db[idTaller].badge = '👑 TOP #1 (ÉLITE)'; db[idTaller].badgeClass = 'badge-elite';
+        } else if (nuevoPlan === 'pro') {
+            db[idTaller].badge = '⭐ DESTACADO (PRO)'; db[idTaller].badgeClass = 'badge-profesional';
+        } else {
+            db[idTaller].badge = ''; db[idTaller].badgeClass = '';
+        }
+        localStorage.setItem('bd_talleres_global', JSON.stringify(db)); // GUARDA PARA TODOS
+    }
+}
+
+// ==========================================
 // FUNCIÓN DINÁMICA DE HORARIOS EN TIEMPO REAL
 // ==========================================
 function estaAbiertoAhora(horarios) {
-    let ahora = new Date();
-    let dia = ahora.getDay(); // 0 = Domingo, 1-5 = L-V, 6 = Sábado
+    let ahora = new Date(); let dia = ahora.getDay();
     let horarioHoy = (dia === 0) ? horarios.d : (dia === 6) ? horarios.s : horarios.lv;
-
     if (!horarioHoy || horarioHoy.toLowerCase().includes('cerrado')) return false;
-
     try {
-        let partes = horarioHoy.split('-');
-        if(partes.length !== 2) return true; // Fallback de seguridad
-
+        let partes = horarioHoy.split('-'); if(partes.length !== 2) return true;
         let parseHora = (horaStr) => {
-            horaStr = horaStr.trim();
-            let [time, modifier] = horaStr.split(' ');
-            let [hours, minutes] = time.split(':');
-            hours = parseInt(hours, 10);
-            minutes = parseInt(minutes, 10);
-            
+            horaStr = horaStr.trim(); let [time, modifier] = horaStr.split(' '); let [hours, minutes] = time.split(':');
+            hours = parseInt(hours, 10); minutes = parseInt(minutes, 10);
             if (hours === 12 && modifier.toUpperCase() === 'AM') hours = 0;
             if (hours < 12 && modifier.toUpperCase() === 'PM') hours += 12;
-            
-            let d = new Date();
-            d.setHours(hours, minutes, 0, 0);
-            return d;
+            let d = new Date(); d.setHours(hours, minutes, 0, 0); return d;
         };
-
-        let apertura = parseHora(partes[0]);
-        let cierre = parseHora(partes[1]);
-        
+        let apertura = parseHora(partes[0]); let cierre = parseHora(partes[1]);
         return (ahora >= apertura && ahora <= cierre);
-    } catch(e) {
-        return true; 
-    }
+    } catch(e) { return true; }
 }
-// ==========================================
 
 function reproducirSonidoUI() {
-    try {
-        let ctx = new (window.AudioContext || window.webkitAudioContext)();
-        let osc = ctx.createOscillator(); let gain = ctx.createGain();
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.type = 'sine'; osc.frequency.setValueAtTime(600, ctx.currentTime);
-        gain.gain.setValueAtTime(0.05, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-        osc.start(); osc.stop(ctx.currentTime + 0.1);
-    } catch(e) {}
+    try { let ctx = new (window.AudioContext || window.webkitAudioContext)(); let osc = ctx.createOscillator(); let gain = ctx.createGain(); osc.connect(gain); gain.connect(ctx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(600, ctx.currentTime); gain.gain.setValueAtTime(0.05, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1); osc.start(); osc.stop(ctx.currentTime + 0.1); } catch(e) {}
 }
 function reproducirSonidoExito() {
-    try {
-        let ctx = new (window.AudioContext || window.webkitAudioContext)();
-        let osc = ctx.createOscillator(); let gain = ctx.createGain();
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.type = 'triangle'; osc.frequency.setValueAtTime(800, ctx.currentTime); osc.frequency.setValueAtTime(1200, ctx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-        osc.start(); osc.stop(ctx.currentTime + 0.3);
-    } catch(e) {}
+    try { let ctx = new (window.AudioContext || window.webkitAudioContext)(); let osc = ctx.createOscillator(); let gain = ctx.createGain(); osc.connect(gain); gain.connect(ctx.destination); osc.type = 'triangle'; osc.frequency.setValueAtTime(800, ctx.currentTime); osc.frequency.setValueAtTime(1200, ctx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3); osc.start(); osc.stop(ctx.currentTime + 0.3); } catch(e) {}
 }
 
 if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
@@ -145,49 +142,35 @@ document.addEventListener('DOMContentLoaded', () => {
     if (sessionStorage.getItem('splashVisto') === 'true') {
         let splash = document.getElementById('splash-screen'); if(splash) splash.style.display = 'none';
     } else {
-        setTimeout(() => {
-            let loader = document.getElementById('lottie-loader'); let acciones = document.getElementById('splash-eleccion');
-            if(loader) loader.style.display = 'none'; if(acciones) acciones.style.display = 'block';
-        }, 2000);
+        setTimeout(() => { let loader = document.getElementById('lottie-loader'); let acciones = document.getElementById('splash-eleccion'); if(loader) loader.style.display = 'none'; if(acciones) acciones.style.display = 'block'; }, 2000);
     }
     let buscador = document.getElementById('buscador'); if (buscador) buscador.addEventListener('keyup', aplicarFiltros);
 });
 
+// AHORA RENDERIZA DESDE LA BASE DE DATOS GLOBAL
 function renderizarTarjetas() {
     let contenedor = document.getElementById('contenedor-talleres'); if (!contenedor) return;
     let soloDestacados = window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
-    let talleresArray = Object.values(baseDatosTalleres);
-
-    if (sessionStorage.getItem('rolUsuario') === 'taller') {
-        let miPlan = sessionStorage.getItem('miTallerPlan'); let miNombre = localStorage.getItem('miTallerNombre');
-        let tallerEncontrado = talleresArray.find(t => t.nombre.toLowerCase().includes(miNombre.toLowerCase().split(' ')[0]));
-        if (tallerEncontrado) {
-            tallerEncontrado.plan = miPlan; tallerEncontrado.nombre = miNombre;
-            if (miPlan === 'elite') { tallerEncontrado.badge = '👑 TOP #1 (ÉLITE)'; tallerEncontrado.badgeClass = 'badge-elite'; } 
-            else if (miPlan === 'pro') { tallerEncontrado.badge = '⭐ DESTACADO (PRO)'; tallerEncontrado.badgeClass = 'badge-profesional'; } 
-            else { tallerEncontrado.badge = ''; tallerEncontrado.badgeClass = ''; }
-        }
-    }
+    
+    let dbGlobal = obtenerTalleres();
+    let talleresArray = Object.values(dbGlobal);
 
     let htmlTarjetas = `<div id="mensaje-sin-resultados" style="display: none; text-align: center; padding: 50px 20px; background: var(--bg-card); border-radius: 12px; border: 1px dashed var(--border-color); margin-bottom: 20px; grid-column: 1 / -1;"><span style="font-size: 40px;" aria-hidden="true">🔍</span><h3 style="color: var(--text-main); margin-top: 15px;">No encontramos talleres</h3><button class="btn-outline" style="margin-top: 15px;" onclick="mostrarTodos()">Limpiar Búsqueda</button></div>`;
 
     talleresArray.sort((a, b) => { const v = { 'elite': 1, 'pro': 2, 'gratis': 3 }; return v[a.plan] - v[b.plan]; });
 
     talleresArray.forEach(t => {
-        if (soloDestacados && t.plan === 'gratis') return;
+        // MAGIA: Si el plan se degradó a "gratis", ya no pasa este filtro y desaparece de la página principal.
+        if (soloDestacados && t.plan === 'gratis') return; 
         
         let esPremium = (t.plan === 'elite' || t.plan === 'pro');
         let cardClass = esPremium ? (t.plan === 'elite' ? 'card premium-elite' : 'card premium-profesional') : 'card';
         let badgeHTML = t.badge ? `<div class="${t.badgeClass}">${t.badge}</div>` : '';
         
-        // --- EVALUACIÓN DE HORARIO EN TIEMPO REAL ---
         let estaAbierto = estaAbiertoAhora(t.horarios);
         let statusText = estaAbierto ? 'Abierto ahora' : 'Cerrado ahora';
         let statusColor = estaAbierto ? '#28a745' : '#dc3545';
-        
-        // Inyectar el tag "abierto" dinámicamente si el cálculo da true
-        let tagsDinamic = t.tags.replace('abierto', '').trim(); 
-        if(estaAbierto) tagsDinamic += ' abierto';
+        let tagsDinamic = t.tags.replace('abierto', '').trim(); if(estaAbierto) tagsDinamic += ' abierto';
 
         let actionsHTML = t.plan === 'gratis' 
             ? `<a href="perfil.html?id=${t.id}" class="btn-primary" style="background:#666;" aria-label="Ver info básica de ${t.nombre}">Info Básica</a><span style="font-size: 11px; color: #d9534f; background: #fdf7f7; padding: 5px; border-radius: 6px; border: 1px solid #ebccd1;">🔒 WhatsApp</span>`
@@ -203,12 +186,7 @@ function renderizarTarjetas() {
                     </div>
                     ${t.badge ? `<h2 class="card-title">${t.nombre}</h2>` : ''}
                     <div class="stars">${t.estrellas}</div>
-                    
-                    <!-- ETIQUETA DE HORARIO DINÁMICA -->
-                    <div class="status-container" style="color: ${statusColor};">
-                        <span class="status-dot" style="background: ${statusColor}; margin-right: 5px;"></span> ${statusText}
-                    </div>
-                    
+                    <div class="status-container" style="color: ${statusColor};"><span class="status-dot" style="background: ${statusColor}; margin-right: 5px;"></span> ${statusText}</div>
                     <div class="card-location">${t.dir}</div>
                     <div class="actions">${actionsHTML}</div>
                 </div>
@@ -253,33 +231,20 @@ function guardarTaller(btn, event) {
     localStorage.setItem('misFavoritos', JSON.stringify(favoritos));
     btn.style.transform = 'scale(1.3)'; setTimeout(() => { btn.style.transform = 'scale(1)'; }, 150);
 }
-function cargarFavoritos() {
-    let favoritos = JSON.parse(localStorage.getItem('misFavoritos')) || [];
-    document.querySelectorAll('.btn-guardar').forEach(btn => { let id = btn.getAttribute('data-id'); if(favoritos.includes(id)) btn.innerText = '❤️'; });
-}
+function cargarFavoritos() { let favoritos = JSON.parse(localStorage.getItem('misFavoritos')) || []; document.querySelectorAll('.btn-guardar').forEach(btn => { let id = btn.getAttribute('data-id'); if(favoritos.includes(id)) btn.innerText = '❤️'; }); }
 
 function seleccionarTaller(lat, lng, esPremium, elementoTarjeta) {
     reproducirSonidoUI();
     let tarjetas = document.querySelectorAll('.card'); tarjetas.forEach(t => t.classList.remove('active'));
     if (elementoTarjeta) elementoTarjeta.classList.add('active');
-    
-    let mapaIframe = document.getElementById('mapa-google'); 
-    let btnComoLlegar = document.getElementById('btn-como-llegar'); 
-    let aviso = document.getElementById('aviso-mapa-restringido');
-    let placeholder = document.getElementById('map-placeholder');
-    
+    let mapaIframe = document.getElementById('mapa-google'); let btnComoLlegar = document.getElementById('btn-como-llegar'); let aviso = document.getElementById('aviso-mapa-restringido'); let placeholder = document.getElementById('map-placeholder');
     if (placeholder) placeholder.style.display = 'none';
-    
     if (esPremium && lat && lng) { 
         if (mapaIframe) mapaIframe.src = `https://maps.google.com/maps?q=${lat},${lng}&hl=es&z=17&output=embed`; 
-        if (btnComoLlegar) { 
-            btnComoLlegar.style.display = 'flex'; 
-            btnComoLlegar.href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-        }
+        if (btnComoLlegar) { btnComoLlegar.style.display = 'flex'; btnComoLlegar.href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`; }
         if (aviso) aviso.style.display = 'none'; 
     } else {
-        if (btnComoLlegar) btnComoLlegar.style.display = 'none'; 
-        if (aviso) aviso.style.display = 'flex';
+        if (btnComoLlegar) btnComoLlegar.style.display = 'none'; if (aviso) aviso.style.display = 'flex';
     }
 }
 
@@ -300,24 +265,29 @@ function setModoLoginSplash(tipo) {
         document.getElementById('caja-demo-cliente').style.display = 'none'; document.getElementById('caja-demo-taller').style.display = 'block';
     }
 }
+
 function procesarLogin() {
     reproducirSonidoExito(); let email = document.getElementById('splash-email').value.toLowerCase();
     let plan = 'elite'; let nombre = 'Motojasvy';
     if (email.includes('autopunto') || email.includes('eduar')) { plan = 'pro'; nombre = 'Motos Eduard La 17'; } 
     else if (email.includes('rodamientos') || email.includes('caminic') || email.includes('frenos')) { plan = 'gratis'; nombre = 'Taller Freno Embrague'; }
-    sessionStorage.setItem('splashVisto', 'true'); sessionStorage.setItem('rolUsuario', modoLoginActual); 
-    if (modoLoginActual === 'taller') { sessionStorage.setItem('miTallerPlan', plan); localStorage.setItem('miTallerNombre', nombre); }
-    cerrarSplashVisible(); actualizarCabecera(); renderizarTarjetas();
+    
+    sessionStorage.setItem('splashVisto', 'true'); 
+    sessionStorage.setItem('rolUsuario', modoLoginActual); 
+    
+    if (modoLoginActual === 'taller') { 
+        sessionStorage.setItem('miTallerPlan', plan); 
+        localStorage.setItem('miTallerNombre', nombre); 
+        actualizarPlanGlobal(nombre, plan); // FUERZA LA BD GLOBAL A REFLEJAR ESTO
+        window.location.href = 'panel-taller.html'; 
+    } else {
+        window.location.href = 'panel-usuario.html'; 
+    }
 }
 function procesarRegistro(tipo) {
     reproducirSonidoExito(); sessionStorage.setItem('splashVisto', 'true'); sessionStorage.setItem('rolUsuario', tipo); 
-    if (tipo === 'cliente') { localStorage.setItem('miVehiculo', document.getElementById('reg-marca').value); localStorage.setItem('miPlaca', document.getElementById('reg-placa').value); } 
-    else {
-        let opciones = document.getElementsByName('plan'); let planElegido = 'gratis';
-        if(opciones[1].checked) planElegido = 'pro'; if(opciones[2].checked) planElegido = 'elite';
-        sessionStorage.setItem('miTallerPlan', planElegido);
-    }
-    cerrarSplashVisible(); actualizarCabecera(); renderizarTarjetas();
+    if (tipo === 'cliente') { localStorage.setItem('miVehiculo', document.getElementById('reg-marca').value); localStorage.setItem('miPlaca', document.getElementById('reg-placa').value); window.location.href = 'panel-usuario.html'; } 
+    else { let opciones = document.getElementsByName('plan'); let planElegido = 'gratis'; if(opciones[1].checked) planElegido = 'pro'; if(opciones[2].checked) planElegido = 'elite'; sessionStorage.setItem('miTallerPlan', planElegido); window.location.href = 'panel-taller.html'; }
 }
 function cerrarSplashVisible() { const splash = document.getElementById('splash-screen'); if (splash) { splash.style.opacity = '0'; setTimeout(() => { splash.style.display = 'none'; }, 600); } }
 
@@ -327,15 +297,8 @@ function actualizarCabecera() {
     let btnDark = `<button class="btn-darkmode" onclick="toggleDarkMode()" aria-label="Cambiar modo oscuro">🌓</button>`;
     let btnSalirElegante = `<a href="#" class="btn-exit-elegant" onclick="cerrarSesion()">🚪 Salir</a>`;
 
-    if (rolLogueado === 'taller') { 
-        contenedorBotones.innerHTML = btnDark + `<a href="panel-taller.html" class="btn-outline" style="border-color: #ffb703; color: #b78200; margin-right: 15px;">⚙️ Mi Panel</a>` + btnSalirElegante; 
-    } 
-    else if (rolLogueado === 'cliente') { 
-        contenedorBotones.innerHTML = btnDark + `<a href="panel-usuario.html" class="btn-outline" style="border-color: #e63946; color: #e63946; margin-right: 15px;">👤 Mi Perfil</a>` + btnSalirElegante; 
-    } 
-    else { 
-        contenedorBotones.innerHTML = btnDark + `<a href="#" class="btn-login" onclick="cerrarSesion()">Ingresar / Registro</a>`; 
-    }
+    if (rolLogueado === 'taller') { contenedorBotones.innerHTML = btnDark + `<a href="panel-taller.html" class="btn-outline" style="border-color: #ffb703; color: #b78200; margin-right: 15px;">⚙️ Mi Panel</a>` + btnSalirElegante; } 
+    else if (rolLogueado === 'cliente') { contenedorBotones.innerHTML = btnDark + `<a href="panel-usuario.html" class="btn-outline" style="border-color: #e63946; color: #e63946; margin-right: 15px;">👤 Mi Perfil</a>` + btnSalirElegante; } 
+    else { contenedorBotones.innerHTML = btnDark + `<a href="#" class="btn-login" onclick="cerrarSesion()">Ingresar / Registro</a>`; }
 }
-
 function cerrarSesion() { reproducirSonidoUI(); sessionStorage.removeItem('splashVisto'); sessionStorage.removeItem('rolUsuario'); sessionStorage.removeItem('miTallerPlan'); window.location.href = 'index.html'; }
